@@ -52,8 +52,15 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
+                    ->label(fn () => __('app.label.content')),
+                NavigationGroup::make()
+                    ->label(fn () => __('app.label.event')),
+                NavigationGroup::make()
+                    ->label(fn () => __('app.label.structure')),
+                NavigationGroup::make()
+                    ->label(fn () => __('app.label.crm')),
+                NavigationGroup::make()
                     ->label(fn () => __('app.label.resources')),
-
                 NavigationGroup::make()
                     ->label(fn () => __('app.label.administration')),
             ])

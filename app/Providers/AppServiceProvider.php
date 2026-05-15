@@ -95,10 +95,11 @@ class AppServiceProvider extends ServiceProvider
     {
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch
-                ->locales(['ru', 'uz', 'en'])
+                ->locales(['ru', 'uz', 'kk', 'en'])
                 ->labels([
                     'ru' => __('app.label.ru'),
                     'uz' => __('app.label.uz'),
+                    'kk' => __('app.label.kk'),
                     'en' => __('app.label.en'),
                 ])
                 ->visible(outsidePanels: true);
@@ -112,9 +113,10 @@ class AppServiceProvider extends ServiceProvider
                 ->localesLabels([
                     'ru' => __('app.label.ru'),
                     'uz' => __('app.label.uz'),
+                    'kk' => __('app.label.kk'),
                     'en' => __('app.label.en'),
                 ])
-                ->locales(['uz', 'ru', 'en'])
+                ->locales(['uz', 'kk', 'ru', 'en'])
                 ->addDirectionByLocale()
                 ->addEmptyBadgeWhenAllFieldsAreEmpty(emptyLabel: __('app.label.empty'))
                 ->addSetActiveTabThatHasValue();

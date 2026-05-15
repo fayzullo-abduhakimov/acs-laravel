@@ -1,0 +1,61 @@
+<div class="section_header">
+    <p class="first_title">Location</p>
+</div>
+
+<div class="main_section">
+    <div class="main_section_header">
+        @include('site._section_logo')
+        <div class="header_navigation">
+            <ul>
+                @foreach ($locations as $location)
+                    <li>
+                        <a href="#{{ $location->name }}" class="navigation_link scroll-link">
+                            {{ $location->title }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
+    <div class="main_section_content">
+        @if ($location_header)
+            <div class="section_title">{{ $location_header->title }}</div>
+            <div class="section_subtitle">{{ $location_header->subtitle }}</div>
+        @endif
+        <div class="reg_button_container">
+            <button class="reg_button" data-bs-toggle="modal" data-bs-target="#registerModal">
+                Register now ↘
+            </button>
+        </div>
+    </div>
+
+    <div class="main_section_hero">
+        <div class="locations_row">
+            @foreach ($locations as $location)
+                <div class="location_item" id="{{ $location->name }}">
+                    <div class="location_name">{{ $location->title }}</div>
+                    <div class="location_content">{!! $location->content !!}</div>
+                </div>
+            @endforeach
+        </div>
+
+        @if ($location_gallery && $location_gallery->galleryItems->isNotEmpty())
+            <div class="gallery swiper mt-5">
+                <div class="swiper-wrapper">
+                    @foreach ($location_gallery->galleryItems as $item)
+                        <div class="swiper-slide">
+                            <div class="slide_item">
+                                <img src="{{ $item->image ? asset('storage/' . $item->image) : '' }}" alt="">
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <div class="swiper_navs">
+                    <div class="slide_prev"><i class="fas fa-arrow-left"></i></div>
+                    <div class="slide_next"><i class="fas fa-arrow-right"></i></div>
+                </div>
+            </div>
+        @endif
+    </div>
+</div>
