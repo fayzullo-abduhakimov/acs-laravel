@@ -14,14 +14,11 @@
         'en' => '/images/logo_home/logo_home_new_en.svg',
     ];
     $logo = $logoMap[$locale] ?? $logoMap['en'];
-
-    $acdfMap = [
-        'ru' => '/images/acdf_logo/dark/logo-ru.svg',
-        'uz' => '/images/acdf_logo/dark/logo-uz.svg',
-        'en' => '/images/acdf_logo/dark/logo-en.svg',
-    ];
-    $acdfLogo = $acdfMap[$locale] ?? $acdfMap['en'];
 @endphp
+
+@push('styles')
+<style>:root { --menu-width: {{ $totalMenuWidth }}px; }</style>
+@endpush
 
 @section('content')
     @foreach ($sections as $section)
@@ -61,9 +58,7 @@
 
                     <div class="hero-container">
                         <div class="logo-container">
-                            ARAL <br>
-                            CULTURE <br>
-                            SUMMIT <br>
+                            <img class="w-50" src="{{ $logo }}" alt="Logo">
                         </div>
                         <div class="reg_button_container mt-4 mt-md-5 pl-1 pl-md-2">
                             <a href="https://95a8f6e7.sibforms.com/serve/MUIFAFNnFlzJwGA0A0f7_DNLkzMeFt3lSeDkMU0Nev9O7WE8y3xupK0e3j4DmHphBPHHDWHiyUoX6TgPAtkcnZowNNA6SYkJIzdTZdB8lHVoYOLBB8TkBhesW0CsZJogWX3TdfTv71RKgpSEjmljKTaPMoTceo5JIQDPfmyv5UvTY6fdi7ExLEYwNHwDx6JUf5Cr2REOV9BhQw08?fbclid=PAZXh0bgNhZW0CMTEAAaeg_ouLeE3RoIBcLCUCruASNTOIkYyKaAp5f6HT7xa9Tfkpy4FAELFbPV7Wjg_aem_nV-i_lS5aLrL6lJW8rFsjA&clckid=daa04bb0"
@@ -100,40 +95,13 @@
                     </div>
                     <div class="main_content">
                         @if ($hero)
-                            <div class="main_section_hero"
-                                style="background-image: url('/images/hero_background_image.png')">
+                            <div class="main_section_hero">
                                 <div class="introduction_block">
                                     <div class="introduction_block_title">
                                         <p>{!! $hero->title !!}</p>
                                     </div>
                                     <div class="introduction_content">
-                                        <div class="introduction_content-top">
-                                            <div class="top_texts">
-                                                {!! translator('app', 'medium_texts') !!}
-                                            </div>
-                                            <div class="acdf_logo">
-                                                <img src="{{ $acdfLogo }}" alt="">
-                                            </div>
-                                        </div>
-                                        <div class="medium__texts">
-                                            {!! translator('app', 'medium_texts') !!}
-                                        </div>
-                                        <div class="introduction_bottom">
-                                            <div class="introduction__news">
-                                                @foreach ($articles->take(2) as $article)
-                                                    <a href="#" class="news-card">
-                                                        <div class="card-image">
-                                                            <img src="{{ $article->image ? asset('storage/' . $article->image) : asset('images/no_image.png') }}"
-                                                                alt="{{ $article->title }}">
-                                                        </div>
-                                                        <div class="card-description">{{ $article->title }}</div>
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                            <div class="bottom__texts">
-                                                {!! translator('app', 'bottom_texts') !!}
-                                            </div>
-                                        </div>
+                                        {!! $hero->content !!}
                                     </div>
                                     @if ($youtube_link)
                                         <div class="embed-responsive">{!! $youtube_link !!}</div>

@@ -8,7 +8,11 @@
       "Read(//tmp/**)",
       "Bash(grep -o '<footer.\\\\{0,200\\\\}' /tmp/acs_home.html)",
       "Read(//c/xampp/htdocs/acs-yii2/frontend/web/js/**)",
-      "Read(//c/xampp/htdocs/acs-yii2/**)"
+      "Read(//c/xampp/htdocs/acs-yii2/**)",
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u Fayzullo -p2772 acs_db -e \"SHOW TABLES;\" 2>&1)",
+      "Read(//c/Users/abduh/Desktop/ACS-frontend/**)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{size_download}b\\\\n\" http://localhost:8000/css/styles.css)",
+      "Bash(curl -s http://localhost:8000/css/styles.css)"
     ]
   }
 }

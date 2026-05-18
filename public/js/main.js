@@ -237,12 +237,8 @@ $(document).ready(function(e){
                 bar.addClass('opened').css('width', `calc(100% - ${menuWidth}px)`);
                 hero.addClass('mobile-opened');
             }
-        }
-    });
 
-    $('.section_header').on('click', function() {
-        if (window.innerWidth < 992) {
-            const $section = $(this).closest('section');
+            const $section = bar;
             setTimeout(function() {
                 if ($section.hasClass('opened')) {
                     $section[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
