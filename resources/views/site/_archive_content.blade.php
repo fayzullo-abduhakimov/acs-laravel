@@ -1,4 +1,5 @@
 <div class="main_section_header">
+    @include('site._section_logo')
     <div class="header_navigation">
         <ul>
             @foreach ($years as $year)
@@ -13,8 +14,15 @@
 </div>
 
 @if ($archive_hero)
+    @php $archiveHeroImage = $archive_hero->image ? asset('storage/' . $archive_hero->image) : asset('images/no_image.png'); @endphp
     <div class="section_content">
         <div class="section_title">{{ $archive_hero->title }}</div>
+        <div class="section_image">
+            <a href="{{ $archiveHeroImage }}" class="w-100" data-fancybox="gallery"
+               data-caption="{{ $archive_hero->title }}">
+                <img src="{{ $archiveHeroImage }}" alt="{{ $archive_hero->title }}">
+            </a>
+        </div>
         <div class="archive_content">{!! $archive_hero->content !!}</div>
     </div>
 @endif
@@ -46,7 +54,7 @@
 @endif
 
 <div class="locations_archive">
-    <div class="section_title">Locations</div>
+    <div class="section_title">{{ translator('app', 'Locations') }}</div>
     @if ($old_locations->isNotEmpty())
         <div class="locations_row">
             @foreach ($old_locations as $location)
@@ -59,7 +67,7 @@
                     </div>
                     <div class="col-xl-6 col-12">
                         <div class="location_image">
-                            <img src="{{ $location->image ? asset('storage/' . $location->image) : '' }}" alt="{{ $location->title }}">
+                            <img src="{{ $location->image ? asset('storage/' . $location->image) : asset('images/no_image.png') }}" alt="{{ $location->title }}">
                         </div>
                     </div>
                 </div>
@@ -70,7 +78,7 @@
 
 @if ($partners && $partners->galleryItems->isNotEmpty())
     <div class="partners archive">
-        <div class="partners_title">Aral Culture Summit Partners</div>
+        <div class="partners_title">{{ translator('app', 'Aral Culture Summit Partners') }}</div>
         <div class="partners_logo">
             @foreach ($partners->galleryItems as $partner)
                 <div class="partner_logo">

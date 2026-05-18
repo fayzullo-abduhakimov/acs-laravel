@@ -1,5 +1,5 @@
 <div class="section_header">
-    <p class="first_title">Location</p>
+    <p class="first_title">{{ translator('app', 'Location') }}</p>
 </div>
 
 <div class="main_section">
@@ -25,7 +25,7 @@
         @endif
         <div class="reg_button_container">
             <button class="reg_button" data-bs-toggle="modal" data-bs-target="#registerModal">
-                Register now ↘
+                {{ translator('app', 'Register now') }} ↘
             </button>
         </div>
     </div>

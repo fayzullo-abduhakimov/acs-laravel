@@ -30,18 +30,18 @@
 
             <div class="footer_col">
                 <div class="contacts">
-                    <p class="section_title">Contacts</p>
+                    <p class="section_title">{{ translator('app', 'Contacts') }}</p>
                     <p>{{ $footer_settings->get('acdf') }}</p>
                     <p>{{ $footer_settings->get('acdf_address') }}</p>
                 </div>
                 <div class="general_inquiries mt-3">
-                    <p class="section_title m-0">General inquiries</p>
+                    <p class="section_title m-0">{{ translator('app', 'General inquiries') }}</p>
                     <p class="m-0">
                         <a href="mailto:{{ $footer_settings->get('acdf_email') }}">{{ $footer_settings->get('acdf_email') }}</a>
                     </p>
                 </div>
                 <div class="social-media mt-3">
-                    <p class="section_title">Social media</p>
+                    <p class="section_title">{{ translator('app', 'Social media') }}</p>
                     @foreach ($social_links as $link)
                         <a href="{{ $link->link }}" target="_blank" aria-label="{{ $link->name }}">
                             <i class="{{ $link->class }} fa-2x"></i>
@@ -52,7 +52,7 @@
 
             <div class="footer_col">
                 <div class="organisers">
-                    <p class="section_title m-0">Organiser</p>
+                    <p class="section_title m-0">{{ translator('app', 'Organiser') }}</p>
                     <p>{{ $footer_settings->get('acdf') }}</p>
                     <a class="d-block mt-4 acdf_logo" href="https://acdf.uz/" target="_blank">
                         <img src="{{ $acdf_logos['light'] }}" alt="logo" class="logo_image_footer light">
@@ -68,12 +68,12 @@
 
             <div class="footer_col">
                 <div class="subscribe_wrap">
-                    <p class="section_title mb-2">Newsletter</p>
+                    <p class="section_title mb-2">{{ translator('app', 'Newsletter') }}</p>
                     <form action="{{ route('subscribe') }}" method="POST" class="validate">
                         @csrf
                         <div class="subscribe_form d-flex">
                             <input type="email" name="email" placeholder="Email" required class="w-100">
-                            <button type="submit" class="btn-white">Subscribe</button>
+                            <button type="submit" class="btn-white">{{ translator('app', 'Subscribe') }}</button>
                         </div>
                         @if (session('success'))
                             <p class="text-success mt-2">{{ session('success') }}</p>

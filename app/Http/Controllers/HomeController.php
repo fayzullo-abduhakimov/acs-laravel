@@ -27,7 +27,7 @@ class HomeController extends Controller
         $social_links   = SocialLink::where('status', 1)->orderBy('order_by')->get();
         $hero           = PageSection::getSection('main_hero', 'home');
         $youtube_link   = SiteSettings::where('name', 'youtube_link')->value('value') ?? '';
-        $sections       = Section::where('status', 1)->orderBy('id')->get();
+        $sections       = Section::visibility()->order()->get();
         $books          = Book::where('status', 1)->orderBy('order_by')->get();
         $articles       = Article::where('status', 1)->orderBy('order_by')->get();
         $partners       = PageSection::getSection('partners_logo', 'home');
@@ -51,25 +51,44 @@ class HomeController extends Controller
         $programs  = EventProgram::where('status', 1)->orderBy('day')->orderBy('start_time')->with(['tag', 'location'])->get();
         $days      = $programs->pluck('day')->unique()->values();
         $firstDay  = $days->first();
-        $firstDayPrograms = $programs->filter(fn ($p) => $p->day == $firstDay);
+        $firstDayPrograms = $programs->filter(fn($p) => $p->day == $firstDay);
 
         $footer_menus  = \App\Models\Menu::where('status', 1)->where('position', 2)->orderBy('order_by')->get();
         $footer_settings = SiteSettings::whereIn('name', ['acdf', 'acdf_address', 'acdf_phone', 'acdf_email'])
             ->pluck('value', 'name');
 
         return view('site.index', compact(
-            'social_links', 'hero', 'youtube_link', 'sections', 'books', 'articles',
-            'partners', 'partners_left', 'partners_right', 'archive_hero', 'archive_gallery',
-            'years', 'archive_news', 'program_dates', 'sessions',
-            'program_header', 'location_header', 'location_gallery', 'locations',
-            'programs', 'days', 'firstDay', 'firstDayPrograms',
-            'footer_menus', 'footer_settings'
+            'social_links',
+            'hero',
+            'youtube_link',
+            'sections',
+            'books',
+            'articles',
+            'partners',
+            'partners_left',
+            'partners_right',
+            'archive_hero',
+            'archive_gallery',
+            'years',
+            'archive_news',
+            'program_dates',
+            'sessions',
+            'program_header',
+            'location_header',
+            'location_gallery',
+            'locations',
+            'programs',
+            'days',
+            'firstDay',
+            'firstDayPrograms',
+            'footer_menus',
+            'footer_settings'
         ));
     }
 
     public function register(Request $request): RedirectResponse
     {
-        $data = $request->validate([
+        $data = $request->validateWithBag('registration', [
             'first_name'     => 'required|string',
             'last_name'      => 'required|string',
             'email'          => 'required|email|unique:registrations,email',
@@ -79,19 +98,19 @@ class HomeController extends Controller
             'state'          => 'nullable|string',
             'postal_code'    => 'nullable|string',
             'sources'        => 'nullable|array',
-            'attendance_days'=> 'nullable|array',
+            'attendance_days' => 'nullable|array',
         ]);
 
         Registration::create($data);
 
-        return back()->with('success', 'Registration successful!');
+        return back()->with('success', translator('app', 'Registration successful!'));
     }
 
     public function subscribe(Request $request): RedirectResponse
     {
         $request->validate(['email' => 'required|email|unique:subscribers,email']);
         Subscriber::create(['email' => $request->email]);
-        return back()->with('success', 'Thank you for subscribing!');
+        return back()->with('success', translator('app', 'Thank you for subscribing!'));
     }
 
     public function getPrograms(Request $request): JsonResponse
@@ -107,24 +126,24 @@ class HomeController extends Controller
             ->with(['location', 'tag'])
             ->orderBy('start_time')
             ->get()
-            ->map(fn ($p) => [
+            ->map(fn($p) => [
                 'id'           => $p->id,
                 'start_time'   => substr($p->start_time, 0, 5),
                 'end_time'     => substr($p->end_time, 0, 5),
                 'bg_color'     => $p->bg_color,
-                'translations' => collect(array_keys($p->getTranslations('title')))->map(fn ($lang) => [
+                'translations' => collect(array_keys($p->getTranslations('title')))->map(fn($lang) => [
                     'language'    => $lang,
                     'title'       => $p->getTranslation('title', $lang) ?? '',
                     'description' => $p->getTranslation('description', $lang) ?? '',
                 ])->values()->toArray(),
                 'location'     => $p->location ? [
-                    'translations' => collect(array_keys($p->location->getTranslations('title')))->map(fn ($lang) => [
+                    'translations' => collect(array_keys($p->location->getTranslations('title')))->map(fn($lang) => [
                         'language' => $lang,
                         'title'    => $p->location->getTranslation('title', $lang) ?? '',
                     ])->values()->toArray(),
                 ] : null,
                 'tag'          => $p->tag ? [
-                    'translations' => collect(array_keys($p->tag->getTranslations('title')))->map(fn ($lang) => [
+                    'translations' => collect(array_keys($p->tag->getTranslations('title')))->map(fn($lang) => [
                         'language' => $lang,
                         'title'    => $p->tag->getTranslation('title', $lang) ?? '',
                     ])->values()->toArray(),
@@ -148,7 +167,7 @@ class HomeController extends Controller
                 'id'           => $article->id,
                 'image'        => $article->image ? asset('storage/' . $article->image) : null,
                 'created_at'   => $article->published_date?->format('d M Y'),
-                'translations' => collect(array_keys($article->getTranslations('title')))->map(fn ($lang) => [
+                'translations' => collect(array_keys($article->getTranslations('title')))->map(fn($lang) => [
                     'language'    => $lang,
                     'title'       => $article->getTranslation('title', $lang) ?? '',
                     'description' => $article->getTranslation('description', $lang) ?? '',
@@ -186,7 +205,12 @@ class HomeController extends Controller
         $years         = $eventYears->merge($locationYears)->unique()->sort()->values();
 
         $html = view('site._archive_content', compact(
-            'archive_events', 'old_locations', 'tags', 'partners', 'archive_hero', 'years'
+            'archive_events',
+            'old_locations',
+            'tags',
+            'partners',
+            'archive_hero',
+            'years'
         ))->with('activeYear', $year)->render();
 
         return response()->json(['success' => true, 'html' => $html]);

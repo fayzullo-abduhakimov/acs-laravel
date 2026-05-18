@@ -33,6 +33,7 @@ class MigrateFromYii2 extends Command
         $this->migrateRegistrations();
         $this->migrateSubscribers();
         $this->migrateSiteSettings();
+        $this->migrateSiteTranslations();
 
         $this->info('Migration complete!');
         return self::SUCCESS;
@@ -122,7 +123,7 @@ class MigrateFromYii2 extends Command
             'archive_news', 'event_programs', 'books', 'articles',
             'gallery_items', 'page_sections', 'pages',
             'menus', 'sections', 'social_links', 'location_images', 'locations', 'tags',
-            'site_settings',
+            'site_settings', 'site_translations',
         ] as $table) {
             DB::table($table)->truncate();
         }
@@ -608,5 +609,50 @@ class MigrateFromYii2 extends Command
             $count++;
         }
         $this->line('  Site settings: ' . $count);
+    }
+
+    // ─── Site Translations (Yii2 DbMessageSource → site_translations) ─────────────
+
+    private function migrateSiteTranslations(): void
+    {
+        $this->info('Migrating site translations (i18n messages)…');
+
+        $sources  = $this->yii2()->table('source_message')->where('category', 'app')->get();
+        $messages = $this->yii2()->table('message')->get()->groupBy('id');
+
+        $count = 0;
+        foreach ($sources as $src) {
+            $key   = $src->message;
+            $value = [];
+
+            foreach ($messages->get($src->id, collect()) as $m) {
+                $translation = $m->translation;
+                if ($translation !== null && $translation !== '') {
+                    $value[$this->mapLang($m->language)] = $translation;
+                }
+            }
+
+            // Yii2 (forceTranslation + en source) falls back to the source string
+            // when a translation is missing — replicate so no label is ever blank.
+            if (empty($value['en'])) {
+                $value['en'] = $key;
+            }
+            foreach (['kk', 'ru', 'uz'] as $locale) {
+                if (empty($value[$locale])) {
+                    $value[$locale] = $value['en'];
+                }
+            }
+
+            DB::table('site_translations')->insertOrIgnore([
+                'category'     => 'app',
+                'key'          => $key,
+                'value'        => json_encode($value, JSON_UNESCAPED_UNICODE),
+                'is_published' => 1,
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ]);
+            $count++;
+        }
+        $this->line('  Site translations: ' . $count);
     }
 }

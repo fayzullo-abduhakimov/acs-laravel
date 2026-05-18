@@ -1,5 +1,5 @@
 <div class="section_header">
-    <p class="first_title">Programme</p>
+    <p class="first_title">{{ translator('app', 'Programme') }}</p>
 </div>
 
 <div class="main_section">
@@ -7,8 +7,8 @@
         @include('site._section_logo')
         <div class="header_navigation">
             <ul>
-                <li><a href="#partners" class="navigation_link scroll-link">Partners</a></li>
-                <li><a href="#press" class="navigation_link scroll-link">Press Selection</a></li>
+                <li><a href="#partners" class="navigation_link scroll-link">{{ translator('app', 'Partners') }}</a></li>
+                <li><a href="#press" class="navigation_link scroll-link">{{ translator('app', 'Press Selection') }}</a></li>
             </ul>
         </div>
     </div>
@@ -19,8 +19,9 @@
             <div class="section_subtitle">{{ $program_header->subtitle }}</div>
         @endif
         <div class="reg_button_container">
-            <a href="https://95a8f6e7.sibforms.com/serve/MUIFAFN" class="reg_button" target="_blank">
-                Subscribe to newsletter ↘
+            <a href="https://95a8f6e7.sibforms.com/serve/MUIFAFNnFlzJwGA0A0f7_DNLkzMeFt3lSeDkMU0Nev9O7WE8y3xupK0e3j4DmHphBPHHDWHiyUoX6TgPAtkcnZowNNA6SYkJIzdTZdB8lHVoYOLBB8TkBhesW0CsZJogWX3TdfTv71RKgpSEjmljKTaPMoTceo5JIQDPfmyv5UvTY6fdi7ExLEYwNHwDx6JUf5Cr2REOV9BhQw08?fbclid=PAZXh0bgNhZW0CMTEAAaeg_ouLeE3RoIBcLCUCruASNTOIkYyKaAp5f6HT7xa9Tfkpy4FAELFbPV7Wjg_aem_nV-i_lS5aLrL6lJW8rFsjA&clckid=daa04bb0"
+               class="reg_button" target="_blank">
+                {{ translator('app', 'Subscribe to newsletter') }} ↘
             </a>
         </div>
     </div>
@@ -29,7 +30,7 @@
         <div class="container-fluid">
             <div class="full_program_container" id="press">
                 <div class="full_program_header">
-                    <div class="full_program_title"><p>When</p></div>
+                    <div class="full_program_title"><p>{{ translator('app', 'When') }}</p></div>
                     <div class="event_days">
                         <div class="row">
                             @foreach ($days as $index => $day)
@@ -85,17 +86,17 @@
                 <div class="master_class">
                     <div class="row">
                         <div class="col-12 col-lg-3 pl-0 pr-0 pr-md-2">
-                            <div class="title">Masterclasses and market last from 11:00 to 16:30</div>
+                            <div class="title">{{ translator('app', 'Masterclasses and market last from 11:00 to 16:30') }}</div>
                         </div>
                         <div class="col-12 col-lg-9 pr-0 pl-0 pl-md-2">
-                            <div class="description">Masterclasses and market</div>
+                            <div class="description">{!! translator('app', 'Masterclasses and market') !!}</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="partners" id="partners">
-                <div class="partners_title">Aral Culture Summit Partners</div>
+                <div class="partners_title">{{ translator('app', 'Aral Culture Summit Partners') }}</div>
                 @if ($partners && $partners->galleryItems->isNotEmpty())
                     <div class="partners_logo">
                         @foreach ($partners->galleryItems as $partner)
@@ -124,9 +125,9 @@
                     @endif
                 </div>
                 <div class="partners_action">
-                    <div class="action_title">Click to download the press kit</div>
+                    <div class="action_title">{{ translator('app', 'Click to download the press kit') }}</div>
                     <div class="download_button">
-                        <a href="#" class="download_btn">Press kit</a>
+                        <a href="#" class="download_btn">{{ translator('app', 'Press kit') }}</a>
                     </div>
                 </div>
             </div>

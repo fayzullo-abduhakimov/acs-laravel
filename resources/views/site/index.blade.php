@@ -1,6 +1,8 @@
 @extends('layouts.main')
 
 @php
+    use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+
     $locale = app()->getLocale();
     $menuTabCount = $sections->filter(fn($s) => !$s->is_opened && $s->status == 1)->count();
     $totalMenuWidth = $menuTabCount * 60;
@@ -12,12 +14,17 @@
         'en' => '/images/logo_home/logo_home_new_en.svg',
     ];
     $logo = $logoMap[$locale] ?? $logoMap['en'];
+
+    $acdfMap = [
+        'ru' => '/images/acdf_logo/dark/logo-ru.svg',
+        'uz' => '/images/acdf_logo/dark/logo-uz.svg',
+        'en' => '/images/acdf_logo/dark/logo-en.svg',
+    ];
+    $acdfLogo = $acdfMap[$locale] ?? $acdfMap['en'];
 @endphp
 
 @section('content')
     @foreach ($sections as $section)
-        {{-- ARAL SCHOOL (redirect section) --}}
-        {{ var_dump($section->name === 'hero') }}
         @if ($section->name === 'aral_school')
             <section data-width="{{ $totalMenuWidth }}" data-redirect="{{ $section->redirect_url }}"
                 class="menu_bar {{ $section->name }} redirect-section {{ $section->status == 0 ? 'disabled' : '' }}">
@@ -25,10 +32,7 @@
                     <p class="first_title">{{ strtoupper(str_replace('_', ' ', $section->name)) }}</p>
                 </div>
             </section>
-        @endif
-
-        {{-- HERO --}}
-        @if ($section->name === 'hero')
+        @elseif ($section->name === 'hero')
             <section data-width="{{ $totalMenuWidth }}"
                 class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
                 @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
@@ -36,35 +40,49 @@
                 <div class="wrapper_header_hero d-flex" style="background-image: url('/images/hero_background_image.png')">
                     <div class="main_header pt-lg-5 d-flex align-items-center flex-row flex-lg-column">
                         <div class="mobile_logo">
-                            <a href="#" class="logo_link">
+                            <a href="{{ route('home') }}" class="logo_link">
                                 <img class="dark" src="/images/logo_header/dark/logo_header_new_en.svg" alt="Logo">
                                 <img class="light" src="/images/logo_header/light/logo_header_new_en.svg" alt="Logo">
                             </a>
                         </div>
                         <div class="header-actions d-flex align-items-center flex-row flex-lg-column">
                             <div class="toggle"></div>
+                            <div class="languages ml-4 ml-lg-0 mt-lg-4 py-4 py-lg-0 my-md-0 d-flex text-center">
+                                @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+                                    <a rel="alternate" hreflang="{{ $localeCode }}"
+                                       href="{{ LaravelLocalization::getLocalizedURL($localeCode) }}"
+                                       class="d-block {{ $localeCode === $locale ? 'active' : '' }}">
+                                        {{ strtoupper($localeCode) }}
+                                    </a>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
 
                     <div class="hero-container">
                         <div class="logo-container">
-                            ARAL <br> CULTURE <br> SUMMIT <br>
+                            ARAL <br>
+                            CULTURE <br>
+                            SUMMIT <br>
                         </div>
                         <div class="reg_button_container mt-4 mt-md-5 pl-1 pl-md-2">
-                            <a href="https://95a8f6e7.sibforms.com/serve/MUIFAFN" class="reg_button" target="_blank">
-                                Subscribe to newsletter ↘
+                            <a href="https://95a8f6e7.sibforms.com/serve/MUIFAFNnFlzJwGA0A0f7_DNLkzMeFt3lSeDkMU0Nev9O7WE8y3xupK0e3j4DmHphBPHHDWHiyUoX6TgPAtkcnZowNNA6SYkJIzdTZdB8lHVoYOLBB8TkBhesW0CsZJogWX3TdfTv71RKgpSEjmljKTaPMoTceo5JIQDPfmyv5UvTY6fdi7ExLEYwNHwDx6JUf5Cr2REOV9BhQw08?fbclid=PAZXh0bgNhZW0CMTEAAaeg_ouLeE3RoIBcLCUCruASNTOIkYyKaAp5f6HT7xa9Tfkpy4FAELFbPV7Wjg_aem_nV-i_lS5aLrL6lJW8rFsjA&clckid=daa04bb0"
+                                class="reg_button" target="_blank">
+                                {{ translator('app', 'Subscribe to newsletter') }} ↘
                             </a>
                         </div>
+
                         <div class="hero-text">
                             <div class="row">
                                 <div class="col-12 col-md-6">
-                                    <p>A future for the planet <br>and Karakalpakstan</p>
+                                    <p>{!! translator('app', 'A future for the planet <br>and Karakalpakstan') !!}</p>
                                 </div>
                                 <div class="col-12 col-md-6">
-                                    <p class="text-end">Autumn<br>2026</p>
+                                    <p class="text-end">{!! translator('app', 'Autumn<br>2026') !!}</p>
                                 </div>
                             </div>
                         </div>
+
                         <div class="social_media_links">
                             @foreach ($social_links as $link)
                                 <a href="{{ $link->link }}" class="social_link" title="{{ $link->name }}"
@@ -78,7 +96,7 @@
 
                 <div class="hero_content d-flex">
                     <div class="hero_content_header">
-                        <span>Overview</span>
+                        <span>{{ translator('app', 'Overview') }}</span>
                     </div>
                     <div class="main_content">
                         @if ($hero)
@@ -86,29 +104,19 @@
                                 style="background-image: url('/images/hero_background_image.png')">
                                 <div class="introduction_block">
                                     <div class="introduction_block_title">
-                                        <p>{{ $hero->title }}</p>
+                                        <p>{!! $hero->title !!}</p>
                                     </div>
                                     <div class="introduction_content">
                                         <div class="introduction_content-top">
                                             <div class="top_texts">
-                                                More than a single event, the Aral Culture Summit functions as a catalyst
-                                                for long-term transformation. As a multi-year, transdisciplinary programme,
-                                                it integrates environmental, climate, and place-based cultural initiatives
-                                                into a living development infrastructure that brings international attention
-                                                to the region's challenges and possibilities while reframing Karakalpakstan
-                                                as a site of innovation, care, and cultural vitality.
+                                                {!! translator('app', 'medium_texts') !!}
                                             </div>
                                             <div class="acdf_logo">
-                                                <img src="/images/acdf_logo/dark/logo-en.svg" alt="">
+                                                <img src="{{ $acdfLogo }}" alt="">
                                             </div>
                                         </div>
                                         <div class="medium__texts">
-                                            More than a single event, the Aral Culture Summit functions as a catalyst for
-                                            long-term transformation. As a multi-year, transdisciplinary programme, it
-                                            integrates environmental, climate, and place-based cultural initiatives into a
-                                            living development infrastructure that brings international attention to the
-                                            region's challenges and possibilities while reframing Karakalpakstan as a site
-                                            of innovation, care, and cultural vitality.
+                                            {!! translator('app', 'medium_texts') !!}
                                         </div>
                                         <div class="introduction_bottom">
                                             <div class="introduction__news">
@@ -123,19 +131,7 @@
                                                 @endforeach
                                             </div>
                                             <div class="bottom__texts">
-                                                The programme illuminates Central Asian expertise rooted in local knowledge,
-                                                resourcefulness, and lived experience, positioning the region as an active
-                                                contributor to global conversations on environmental stewardship, climate
-                                                adaptation, cultural heritage, and sustainable development. The 2026 edition
-                                                reframes the Aral basin not as a landscape defined solely by environmental
-                                                crisis, but as a multispecies home and socio-ecological system where
-                                                communities, researchers, cultural practitioners, and institutions
-                                                collaborate to address shared challenges and advance new approaches to
-                                                coexistence and circular economic development.<br><br>First announced in
-                                                March 2023 during the UN Water Conference in New York, the initiative seeks
-                                                to foster innovation and collaboration through residencies, workshops,
-                                                exhibitions, festivals, and interdisciplinary research. The inaugural Summit
-                                                took place in Nukus in April 2025.
+                                                {!! translator('app', 'bottom_texts') !!}
                                             </div>
                                         </div>
                                     </div>
@@ -148,52 +144,45 @@
                     </div>
                 </div>
             </section>
-        @endif
-
-
-        {{-- PROGRAMME --}}
-        {{-- <section data-width="{{ $totalMenuWidth }}"
-            class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
-            @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
-            @include('site._program')
-        </section> --}}
-
-        {{-- LOCATION --}}
-        {{-- <section data-width="{{ $totalMenuWidth }}"
-            class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
-            @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
-            @include('site._location')
-        </section> --}}
-
-        {{-- RESEARCH --}}
-        @if ($section->name === 'research')
+        @elseif ($section->name === 'program')
+            <section data-width="{{ $totalMenuWidth }}"
+                class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
+                @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
+                @include('site._program')
+            </section>
+        @elseif ($section->name === 'location')
+            <section data-width="{{ $totalMenuWidth }}"
+                class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
+                @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
+                @include('site._location')
+            </section>
+        @elseif ($section->name === 'research')
             <section data-width="{{ $totalMenuWidth }}"
                 class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
                 @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
 
                 <div class="section_header">
-                    <p class="first_title">Research</p>
+                    <p class="first_title">{{ translator('app', 'Research') }}</p>
                 </div>
                 <div class="main_section">
                     <div class="main_section_header">
                         @include('site._section_logo')
                         <div class="header_navigation">
                             <ul>
-                                <li><a href="#books" class="navigation_link scroll-link">Books</a></li>
-                                <li><a href="#articles" class="navigation_link scroll-link">Articles</a></li>
-                                <li><a href="#" class="nav_link back_link">← Back</a></li>
+                                <li><a href="#books" class="navigation_link scroll-link">{{ translator('app', 'Books') }}</a></li>
+                                <li><a href="#articles" class="navigation_link scroll-link">{{ translator('app', 'Articles') }}</a></li>
+                                <li><a href="#" class="nav_link back_link">← {{ translator('app', 'Back') }}</a></li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="main_section_hero">
-                        {{-- BOOKS --}}
                         <div class="research_books" id="books">
-                            <h2 class="section_title">Books</h2>
+                            <h2 class="section_title">{{ translator('app', 'Books') }}</h2>
                             <div class="research_header">
-                                <div class="col">Name</div>
-                                <div class="col">Author</div>
-                                <div class="col">Access</div>
+                                <div class="col">{{ translator('app', 'Name') }}</div>
+                                <div class="col">{{ translator('app', 'Author') }}</div>
+                                <div class="col">{{ translator('app', 'Access') }}</div>
                             </div>
                             @if ($books->isNotEmpty())
                                 <div class="books_accordion">
@@ -205,17 +194,21 @@
                                                 <div class="accordion_actions">
                                                     <ul class="actions">
                                                         @if ($book->link)
-                                                            <li><a href="{{ $book->link }}" class="action_link"
-                                                                    target="_blank">Buy ↗</a></li>
+                                                            <li>
+                                                                <a href="{{ $book->link }}" class="action_link"
+                                                                    target="_blank">{{ translator('app', 'Buy') }} ↗</a>
+                                                            </li>
                                                         @endif
                                                         @if ($book->file)
-                                                            <li><a href="{{ asset('storage/' . $book->file) }}"
-                                                                    class="action_link" target="_blank">Download</a></li>
+                                                            <li>
+                                                                <a href="{{ asset('storage/' . $book->file) }}"
+                                                                    class="action_link" target="_blank">{{ translator('app', 'Download') }}</a>
+                                                            </li>
                                                         @endif
                                                     </ul>
-                                                    <button type="button" class="accordion_open" data-text-open="Read less"
-                                                        data-text-closed="Read more">Read
-                                                        more</button>
+                                                    <button type="button" class="accordion_open"
+                                                        data-text-open="{{ translator('app', 'Read less') }}"
+                                                        data-text-closed="{{ translator('app', 'Read more') }}">{{ translator('app', 'Read more') }}</button>
                                                 </div>
                                             </div>
                                             <div class="accordion_content">
@@ -237,9 +230,8 @@
                             @endif
                         </div>
 
-                        {{-- ARTICLES --}}
                         <div class="research_articles" id="articles">
-                            <h2 class="section_title">Articles</h2>
+                            <h2 class="section_title">{{ translator('app', 'Articles') }}</h2>
                             @if ($articles->isNotEmpty())
                                 <div class="articles_row row">
                                     @foreach ($articles as $article)
@@ -250,11 +242,11 @@
                                                         alt="{{ $article->title }}">
                                                 </div>
                                                 <div class="article_date">
-                                                    {{ $article->published_date?->translatedFormat('F d, Y') }}
+                                                    {{ $article->published_date?->locale($locale)->translatedFormat('F d, Y') }}
                                                 </div>
                                                 <div class="article_title">{{ $article->title }}</div>
                                                 <button type="button" class="article_link"
-                                                    data-id="{{ $article->id }}">Read article</button>
+                                                    data-id="{{ $article->id }}">{{ translator('app', 'Read article') }}</button>
                                             </div>
                                         </div>
                                     @endforeach
@@ -262,19 +254,17 @@
                             @endif
                         </div>
                     </div>
+
                     <div class="article_section"></div>
                 </div>
             </section>
-        @endif
-
-        {{-- ARCHIVE --}}
-        @if ($section->name === 'archive')
+        @elseif ($section->name === 'archive')
             <section data-width="{{ $totalMenuWidth }}"
                 class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
                 @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
 
                 <div class="section_header">
-                    <p class="first_title">Archive</p>
+                    <p class="first_title">{{ translator('app', 'Archive') }}</p>
                 </div>
                 <div class="main_section">
                     <div class="main_section_header">
@@ -302,7 +292,7 @@
                     @endif
 
                     <div class="archive_programs">
-                        <div class="programs_title">Summit Programme</div>
+                        <div class="programs_title">{{ translator('app', 'summit_programme') }}</div>
                         <div class="programs_accordion">
                             @foreach ($program_dates as $date)
                                 @php
@@ -367,7 +357,7 @@
                     @endif
 
                     <div class="partners archive">
-                        <div class="partners_title">Aral Culture Summit Partners</div>
+                        <div class="partners_title">{{ translator('app', 'Aral Culture Summit Partners') }}</div>
                         @if ($partners && $partners->galleryItems->isNotEmpty())
                             <div class="partners_logo">
                                 @foreach ($partners->galleryItems as $partner)
@@ -379,7 +369,6 @@
                             </div>
                         @endif
                     </div>
-
                 </div>
             </section>
         @endif

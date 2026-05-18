@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(php artisan *)"
+      "Bash(php artisan *)",
+      "Bash(curl -s -m 10 -o NUL -w \"%{http_code}\" http://localhost:8000/)",
+      "Bash(curl -s -m 10 -o NUL -w \"%{http_code}\" http://localhost:8000/en)",
+      "Bash(curl -s -m 15 http://localhost:8000/en -o /tmp/acs_home.html)",
+      "Read(//tmp/**)",
+      "Bash(grep -o '<footer.\\\\{0,200\\\\}' /tmp/acs_home.html)",
+      "Read(//c/xampp/htdocs/acs-yii2/frontend/web/js/**)",
+      "Read(//c/xampp/htdocs/acs-yii2/**)"
     ]
   }
 }
