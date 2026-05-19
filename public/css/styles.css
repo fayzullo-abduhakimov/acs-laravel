@@ -21,7 +21,8 @@ body {
     overscroll-behavior: none;
 }
 
-body.lang-ru {
+body.lang-ru,
+body.lang-kk {
     font-family: "Georgia", sans-serif !important;
 }
 

@@ -14,7 +14,7 @@ class ArchiveNewsForm
     public static function configure(Schema $schema): Schema
     {
         return $schema->columns(2)->components([
-            FileUpload::make('image')->image()->directory('archive-news')->columnSpanFull(),
+            FileUpload::make('image')->image()->disk('public')->directory('archive-news')->columnSpanFull(),
             TranslatableTabs::make('translations')->columnSpanFull()->schema([
                 TextInput::make('title')->required(),
                 Textarea::make('description'),

@@ -14,8 +14,8 @@ class BookForm
     public static function configure(Schema $schema): Schema
     {
         return $schema->columns(2)->components([
-            FileUpload::make('image')->image()->directory('books')->columnSpanFull(),
-            FileUpload::make('file')->directory('books/files')->columnSpanFull(),
+            FileUpload::make('image')->image()->disk('public')->directory('books')->columnSpanFull(),
+            FileUpload::make('file')->disk('public')->directory('books/files')->columnSpanFull(),
             TextInput::make('link')->columnSpanFull(),
             TranslatableTabs::make('translations')->columnSpanFull()->schema([
                 TextInput::make('author')->required(),

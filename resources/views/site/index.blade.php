@@ -194,7 +194,7 @@
                                                     alt="{{ $article->title }}">
                                             </div>
                                             <div class="article_date">
-                                                {{ $article->published_date?->locale($locale)->translatedFormat('F d, Y') }}
+                                                {{ $article->published_date?->locale($locale)->translatedFormat($locale === 'uz' ? 'd.m.Y' : 'F d, Y') }}
                                             </div>
                                             <div class="article_title">{{ $article->title }}</div>
                                             <button type="button" class="article_link"

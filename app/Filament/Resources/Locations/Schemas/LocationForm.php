@@ -15,7 +15,7 @@ class LocationForm
     {
         return $schema->columns(2)->components([
             TextInput::make('name')->required()->columnSpanFull(),
-            FileUpload::make('image')->image()->directory('locations')->columnSpanFull(),
+            FileUpload::make('image')->image()->disk('public')->directory('locations')->columnSpanFull(),
             TranslatableTabs::make('translations')->columnSpanFull()->schema([
                 TextInput::make('title')->required(),
                 Textarea::make('content'),

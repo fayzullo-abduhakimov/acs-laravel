@@ -15,7 +15,7 @@ class ArticleForm
     public static function configure(Schema $schema): Schema
     {
         return $schema->columns(2)->components([
-            FileUpload::make('image')->image()->directory('articles')->columnSpanFull(),
+            FileUpload::make('image')->image()->disk('public')->directory('articles')->columnSpanFull(),
             TextInput::make('slug')->columnSpanFull(),
             TranslatableTabs::make('translations')->columnSpanFull()->schema([
                 TextInput::make('title')->required(),
