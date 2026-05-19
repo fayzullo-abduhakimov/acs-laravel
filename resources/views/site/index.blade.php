@@ -16,20 +16,20 @@
     $logo = $logoMap[$locale] ?? $logoMap['en'];
 @endphp
 
-@push('styles')
+{{-- @push('styles')
 <style>:root { --menu-width: {{ $totalMenuWidth }}px; }</style>
-@endpush
+@endpush --}}
 
 @section('content')
     @foreach ($sections as $section)
-        @if ($section->name === 'aral_school')
+        @if ($section->name == 'aral_school')
             <section data-width="{{ $totalMenuWidth }}" data-redirect="{{ $section->redirect_url }}"
                 class="menu_bar {{ $section->name }} redirect-section {{ $section->status == 0 ? 'disabled' : '' }}">
                 <div class="section_header">
                     <p class="first_title">{{ strtoupper(str_replace('_', ' ', $section->name)) }}</p>
                 </div>
             </section>
-        @elseif ($section->name === 'hero')
+        @elseif ($section->name == 'hero')
             <section data-width="{{ $totalMenuWidth }}"
                 class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
                 @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
@@ -47,8 +47,8 @@
                             <div class="languages ml-4 ml-lg-0 mt-lg-4 py-4 py-lg-0 my-md-0 d-flex text-center">
                                 @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
                                     <a rel="alternate" hreflang="{{ $localeCode }}"
-                                       href="{{ LaravelLocalization::getLocalizedURL($localeCode) }}"
-                                       class="d-block {{ $localeCode === $locale ? 'active' : '' }}">
+                                        href="{{ LaravelLocalization::getLocalizedURL($localeCode) }}"
+                                        class="d-block {{ $localeCode === $locale ? 'active' : '' }}">
                                         {{ strtoupper($localeCode) }}
                                     </a>
                                 @endforeach
@@ -112,19 +112,19 @@
                     </div>
                 </div>
             </section>
-        @elseif ($section->name === 'program')
+            {{-- @elseif ($section->name === 'program')
             <section data-width="{{ $totalMenuWidth }}"
                 class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
                 @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
                 @include('site._program')
-            </section>
-        @elseif ($section->name === 'location')
+            </section> --}}
+            {{-- @elseif ($section->name === 'location')
             <section data-width="{{ $totalMenuWidth }}"
                 class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
                 @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
                 @include('site._location')
-            </section>
-        @elseif ($section->name === 'research')
+            </section> --}}
+        @elseif ($section->name == 'research')
             <section data-width="{{ $totalMenuWidth }}"
                 class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
                 @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
@@ -137,8 +137,10 @@
                         @include('site._section_logo')
                         <div class="header_navigation">
                             <ul>
-                                <li><a href="#books" class="navigation_link scroll-link">{{ translator('app', 'Books') }}</a></li>
-                                <li><a href="#articles" class="navigation_link scroll-link">{{ translator('app', 'Articles') }}</a></li>
+                                <li><a href="#books"
+                                        class="navigation_link scroll-link">{{ translator('app', 'Books') }}</a></li>
+                                <li><a href="#articles"
+                                        class="navigation_link scroll-link">{{ translator('app', 'Articles') }}</a></li>
                                 <li><a href="#" class="nav_link back_link">← {{ translator('app', 'Back') }}</a></li>
                             </ul>
                         </div>
@@ -170,7 +172,8 @@
                                                         @if ($book->file)
                                                             <li>
                                                                 <a href="{{ asset('storage/' . $book->file) }}"
-                                                                    class="action_link" target="_blank">{{ translator('app', 'Download') }}</a>
+                                                                    class="action_link"
+                                                                    target="_blank">{{ translator('app', 'Download') }}</a>
                                                             </li>
                                                         @endif
                                                     </ul>
@@ -226,7 +229,7 @@
                     <div class="article_section"></div>
                 </div>
             </section>
-        @elseif ($section->name === 'archive')
+        @elseif ($section->name == 'archive')
             <section data-width="{{ $totalMenuWidth }}"
                 class="menu_bar {{ $section->name }} {{ $section->is_opened ? 'opened' : '' }} {{ $section->status == 0 ? 'disabled' : '' }}"
                 @if ($section->is_opened) style="width: calc(100% - {{ $totalMenuWidth }}px);" @endif>
@@ -343,6 +346,6 @@
     @endforeach
 @endsection
 
-@section('footer')
+{{-- @section('footer')
     @include('site._footer')
-@endsection
+@endsection --}}

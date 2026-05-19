@@ -16,6 +16,7 @@ use App\Models\SiteSettings;
 use App\Models\SocialLink;
 use App\Models\Subscriber;
 use App\Models\Tag;
+use App\Models\Menu;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -53,7 +54,7 @@ class HomeController extends Controller
         $firstDay  = $days->first();
         $firstDayPrograms = $programs->filter(fn($p) => $p->day == $firstDay);
 
-        $footer_menus  = \App\Models\Menu::where('status', 1)->where('position', 2)->orderBy('order_by')->get();
+        $footer_menus  = Menu::where('status', 1)->where('position', 2)->orderBy('order_by')->get();
         $footer_settings = SiteSettings::whereIn('name', ['acdf', 'acdf_address', 'acdf_phone', 'acdf_email'])
             ->pluck('value', 'name');
 

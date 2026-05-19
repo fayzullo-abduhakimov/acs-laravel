@@ -115,10 +115,10 @@ $yandexMetrika = site_setting('yandex_metrika', '103799675');
             @yield('content')
         </div>
 
-        @yield('footer')
+        <x-footer :footer_settings="$footer_settings" :social_links="$social_links" :footer_menus="$footer_menus" />
     </main>
 
-    @include('site._registration_form')
+    {{-- @include('site._registration_form') --}}
 
     <script src="{{ $asset('/js/jquery.min.js') }}"></script>
     <script src="{{ $asset('/js/bootstrap.bundle.min.js') }}"></script>
