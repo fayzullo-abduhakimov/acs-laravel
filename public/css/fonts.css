@@ -32,8 +32,8 @@
 @font-face {
     font-family: "Exposure_+10";
     src:
-        url("/fonts/exposure/Exposure_+10_205TF.woff2") format("woff2"),
-        url("/fonts/exposure/Exposure_+10_205TF.woff") format("woff");
+        url("/fonts/exposure/Exposure_%2B10_205TF.woff2") format("woff2"),
+        url("/fonts/exposure/Exposure_%2B10_205TF.woff") format("woff");
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -42,8 +42,8 @@
 @font-face {
     font-family: "Exposure_+80";
     src:
-        url("/fonts/exposure/Exposure_+80_205TF.woff2") format("woff2"),
-        url("/fonts/exposure/Exposure_+80_205TF.woff") format("woff");
+        url("/fonts/exposure/Exposure_%2B80_205TF.woff2") format("woff2"),
+        url("/fonts/exposure/Exposure_%2B80_205TF.woff") format("woff");
     font-weight: normal;
     font-style: normal;
     font-display: swap;

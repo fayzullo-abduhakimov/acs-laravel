@@ -87,8 +87,11 @@
                     <form action="{{ route('subscribe') }}" method="POST" class="validate">
                         @csrf
                         <div class="subscribe_form d-flex">
-                            <input type="email" name="email" placeholder="Email" required class="w-100">
-                            <button type="submit" class="btn-white">{{ translator('app', 'Subscribe') }}</button>
+                            <div class="w-100 field-subscribers-email required">
+                                <input type="email" name="email" placeholder="Email" required class="required email w-100">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <input type="submit" class="btn-white" value="{{ translator('app', 'Subscribe') }}">
                         </div>
                         @if (session('success'))
                             <p class="text-success mt-2">{{ session('success') }}</p>
