@@ -313,6 +313,8 @@ $(document).ready(function(e){
         slidesPerView: 1,
         spaceBetween: 24,
         grabCursor: true,
+        observer: true,
+        observeParents: true,
         navigation: {
             nextEl: ".gallery .slide_next",
             prevEl: ".gallery .slide_prev"
