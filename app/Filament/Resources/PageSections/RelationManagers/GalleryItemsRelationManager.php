@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PageSections\RelationManagers;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
@@ -38,7 +39,28 @@ class GalleryItemsRelationManager extends RelationManager
                 TextColumn::make('sort')->sortable(),
             ])
             ->defaultSort('sort')
-            ->headerActions([CreateAction::make()])
+            ->headerActions([
+                CreateAction::make(),
+                Action::make('uploadMultiple')
+                    ->label('Upload Multiple')
+                    ->icon('heroicon-o-photo')
+                    ->form([
+                        FileUpload::make('images')
+                            ->multiple()
+                            ->image()
+                            ->disk('public')
+                            ->directory('gallery')
+                            ->required(),
+                    ])
+                    ->action(function (array $data): void {
+                        foreach ($data['images'] as $image) {
+                            $this->getOwnerRecord()->galleryItems()->create([
+                                'image' => $image,
+                                'sort'  => 0,
+                            ]);
+                        }
+                    }),
+            ])
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }

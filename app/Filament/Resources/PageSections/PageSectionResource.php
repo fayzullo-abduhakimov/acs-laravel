@@ -29,7 +29,7 @@ class PageSectionResource extends Resource
     public static function form(Schema $schema): Schema { return PageSectionForm::configure($schema); }
     public static function table(Table $table): Table { return PageSectionsTable::configure($table); }
 
-    public static function getRelationManagers(): array
+    public static function getRelations(): array
     {
         return [
             GalleryItemsRelationManager::class,
