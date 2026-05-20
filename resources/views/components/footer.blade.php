@@ -1,5 +1,7 @@
 @props(['footer_settings', 'social_links', 'footer_menus'])
 
+@php use Mcamara\LaravelLocalization\Facades\LaravelLocalization; @endphp
+
 <footer class="footer">
     <div class="container-fluid">
         <div class="d-flex align-items-start footer_row">
@@ -42,7 +44,7 @@
                 </div>
                 <div class="policies mobile mt-4 pt-3">
                     @foreach ($footer_menus as $menu)
-                        <a href="{{ $menu->link }}" class="me-3">{{ $menu->title }}</a>
+                        <a href="{{ LaravelLocalization::getLocalizedURL(null, $menu->link) }}" class="me-3">{{ $menu->title }}</a>
                     @endforeach
                 </div>
             </div>
@@ -66,7 +68,7 @@
                     </form>
                     <div class="policies mt-4 pt-3">
                         @foreach ($footer_menus as $menu)
-                            <a href="{{ $menu->link }}" class="me-3">{{ $menu->title }}</a>
+                            <a href="{{ LaravelLocalization::getLocalizedURL(null, $menu->link) }}" class="me-3">{{ $menu->title }}</a>
                         @endforeach
                     </div>
                 </div>
