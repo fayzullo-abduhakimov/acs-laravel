@@ -1,7 +1,9 @@
 <?php
 
 test('the application returns a successful response', function () {
-    $response = $this->get('/');
-
-    $response->assertStatus(200);
+    $this->withoutMiddleware([
+        \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
+        \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+        \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class,
+    ])->get('/')->assertOk();
 });

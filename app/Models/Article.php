@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasStorageImage;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 
 class Article extends Model
 {
+    use HasFactory;
     use HasStorageImage;
     use HasTranslations;
 
