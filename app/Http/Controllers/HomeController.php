@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Models\Book;
 use App\Models\EventProgram;
 use App\Models\Location;
+use App\Models\Menu;
 use App\Models\PageSection;
 use App\Models\ProgramDate;
 use App\Models\ProgramSession;
@@ -16,89 +17,90 @@ use App\Models\SiteSettings;
 use App\Models\SocialLink;
 use App\Models\Subscriber;
 use App\Models\Tag;
-use App\Models\Menu;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class HomeController extends Controller
 {
+    /** Section names rendered on the home page (looked up in one query). */
+    private const HOME_SECTIONS = [
+        'main_hero',
+        'partners_logo',
+        'partners_left_text',
+        'partners_right_text',
+        'archive_hero',
+        'archive_gallery',
+        'program_header',
+        'location_header',
+        'location_gallery',
+    ];
+
     public function index()
     {
-        $social_links   = SocialLink::where('status', 1)->orderBy('order_by')->get();
-        $hero           = PageSection::getSection('main_hero', 'home');
-        $youtube_link   = SiteSettings::where('name', 'youtube_link')->value('value') ?? '';
-        $sections       = Section::visibility()->order()->get();
-        $books          = Book::where('status', 1)->orderBy('order_by')->get();
-        $articles       = Article::where('status', 1)->orderBy('order_by')->get();
-        $partners       = PageSection::getSection('partners_logo', 'home');
-        $partners_left  = PageSection::getSection('partners_left_text', 'home');
-        $partners_right = PageSection::getSection('partners_right_text', 'home');
-        $archive_hero   = PageSection::getSection('archive_hero', 'home');
-        $archive_gallery = PageSection::getSection('archive_gallery', 'home');
+        $sectionsByName = PageSection::forPageKeyed('home', self::HOME_SECTIONS);
 
-        $years = ArchiveNews::selectRaw('YEAR(created_at) as year')
-            ->groupBy('year')->orderBy('year')->pluck('year');
+        $programs         = EventProgram::where('status', 1)
+            ->with(['tag', 'location'])
+            ->orderBy('day')
+            ->orderBy('start_time')
+            ->get();
+        $days             = $programs->pluck('day')->unique()->values();
+        $firstDay         = $days->first();
+        $firstDayPrograms = $programs->where('day', $firstDay);
 
-        $archive_news  = ArchiveNews::where('status', 1)->orderBy('order_by', 'desc')->get();
-        $program_dates = ProgramDate::orderBy('date')->get();
-        $sessions      = ProgramSession::orderBy('sort')->get();
-
-        $program_header   = PageSection::getSection('program_header', 'home');
-        $location_header  = PageSection::getSection('location_header', 'home');
-        $location_gallery = PageSection::getSection('location_gallery', 'home');
-        $locations        = Location::where('status', 1)->orderBy('order_by')->get();
-
-        $programs  = EventProgram::where('status', 1)->orderBy('day')->orderBy('start_time')->with(['tag', 'location'])->get();
-        $days      = $programs->pluck('day')->unique()->values();
-        $firstDay  = $days->first();
-        $firstDayPrograms = $programs->filter(fn($p) => $p->day == $firstDay);
-
-        $footer_menus  = Menu::where('status', 1)->where('position', 2)->orderBy('order_by')->get();
-        $footer_settings = SiteSettings::whereIn('name', ['acdf', 'acdf_address', 'acdf_phone', 'acdf_email'])
+        $footerSettings = SiteSettings::query()
+            ->whereIn('name', ['acdf', 'acdf_address', 'acdf_phone', 'acdf_email'])
             ->pluck('value', 'name');
 
-        return view('site.index', compact(
-            'social_links',
-            'hero',
-            'youtube_link',
-            'sections',
-            'books',
-            'articles',
-            'partners',
-            'partners_left',
-            'partners_right',
-            'archive_hero',
-            'archive_gallery',
-            'years',
-            'archive_news',
-            'program_dates',
-            'sessions',
-            'program_header',
-            'location_header',
-            'location_gallery',
-            'locations',
-            'programs',
-            'days',
-            'firstDay',
-            'firstDayPrograms',
-            'footer_menus',
-            'footer_settings'
-        ));
+        return view('site.index', [
+            'social_links'      => SocialLink::where('status', 1)->orderBy('order_by')->get(),
+            'sections'          => Section::visibility()->order()->get(),
+            'books'             => Book::where('status', 1)->orderBy('order_by')->get(),
+            'articles'          => Article::where('status', 1)->orderBy('order_by')->get(),
+            'archive_news'      => ArchiveNews::where('status', 1)->orderBy('order_by', 'desc')->get(),
+            'program_dates'     => ProgramDate::orderBy('date')->get(),
+            'sessions'          => ProgramSession::orderBy('sort')->get(),
+            'years'             => ArchiveNews::selectRaw('YEAR(created_at) as year')
+                                       ->groupBy('year')->orderBy('year')->pluck('year'),
+            'locations'         => Location::where('status', 1)->orderBy('order_by')->get(),
+
+            'youtube_link'      => SiteSettings::where('name', 'youtube_link')->value('value') ?? '',
+
+            'hero'              => $sectionsByName->get('main_hero'),
+            'partners'          => $sectionsByName->get('partners_logo'),
+            'partners_left'     => $sectionsByName->get('partners_left_text'),
+            'partners_right'    => $sectionsByName->get('partners_right_text'),
+            'archive_hero'      => $sectionsByName->get('archive_hero'),
+            'archive_gallery'   => $sectionsByName->get('archive_gallery'),
+            'program_header'    => $sectionsByName->get('program_header'),
+            'location_header'   => $sectionsByName->get('location_header'),
+            'location_gallery'  => $sectionsByName->get('location_gallery'),
+
+            'programs'          => $programs,
+            'days'              => $days,
+            'firstDay'          => $firstDay,
+            'firstDayPrograms'  => $firstDayPrograms,
+
+            'footer_menus'      => Menu::where('status', 1)->where('position', 2)->orderBy('order_by')->get(),
+            'footer_settings'   => $footerSettings,
+        ]);
     }
 
     public function register(Request $request): RedirectResponse
     {
         $data = $request->validateWithBag('registration', [
-            'first_name'     => 'required|string',
-            'last_name'      => 'required|string',
-            'email'          => 'required|email|unique:registrations,email',
-            'phone'          => 'required|string',
-            'address'        => 'required|string',
-            'city'           => 'required|string',
-            'state'          => 'nullable|string',
-            'postal_code'    => 'nullable|string',
-            'sources'        => 'nullable|array',
+            'first_name'      => 'required|string',
+            'last_name'       => 'required|string',
+            'email'           => 'required|email|unique:registrations,email',
+            'phone'           => 'required|string',
+            'address'         => 'required|string',
+            'city'            => 'required|string',
+            'state'           => 'nullable|string',
+            'postal_code'     => 'nullable|string',
+            'sources'         => 'nullable|array',
             'attendance_days' => 'nullable|array',
         ]);
 
@@ -111,6 +113,7 @@ class HomeController extends Controller
     {
         $request->validate(['email' => 'required|email|unique:subscribers,email']);
         Subscriber::create(['email' => $request->email]);
+
         return back()->with('success', translator('app', 'Thank you for subscribing!'));
     }
 
@@ -118,7 +121,7 @@ class HomeController extends Controller
     {
         $day = $request->input('day');
 
-        if (!$day) {
+        if (! $day) {
             return response()->json(['success' => false, 'message' => 'Day is required']);
         }
 
@@ -127,28 +130,18 @@ class HomeController extends Controller
             ->with(['location', 'tag'])
             ->orderBy('start_time')
             ->get()
-            ->map(fn($p) => [
+            ->map(fn ($p) => [
                 'id'           => $p->id,
                 'start_time'   => substr($p->start_time, 0, 5),
                 'end_time'     => substr($p->end_time, 0, 5),
                 'bg_color'     => $p->bg_color,
-                'translations' => collect(array_keys($p->getTranslations('title')))->map(fn($lang) => [
-                    'language'    => $lang,
-                    'title'       => $p->getTranslation('title', $lang) ?? '',
-                    'description' => $p->getTranslation('description', $lang) ?? '',
-                ])->values()->toArray(),
-                'location'     => $p->location ? [
-                    'translations' => collect(array_keys($p->location->getTranslations('title')))->map(fn($lang) => [
-                        'language' => $lang,
-                        'title'    => $p->location->getTranslation('title', $lang) ?? '',
-                    ])->values()->toArray(),
-                ] : null,
-                'tag'          => $p->tag ? [
-                    'translations' => collect(array_keys($p->tag->getTranslations('title')))->map(fn($lang) => [
-                        'language' => $lang,
-                        'title'    => $p->tag->getTranslation('title', $lang) ?? '',
-                    ])->values()->toArray(),
-                ] : null,
+                'translations' => $this->translationsFor($p, ['title', 'description']),
+                'location'     => $p->location
+                    ? ['translations' => $this->translationsFor($p->location, ['title'])]
+                    : null,
+                'tag'          => $p->tag
+                    ? ['translations' => $this->translationsFor($p->tag, ['title'])]
+                    : null,
             ]);
 
         return response()->json(['success' => true, 'programs' => $programs]);
@@ -158,7 +151,7 @@ class HomeController extends Controller
     {
         $article = Article::where('id', $request->input('id'))->where('status', 1)->first();
 
-        if (!$article) {
+        if (! $article) {
             return response()->json(['success' => false, 'message' => 'Not found']);
         }
 
@@ -166,14 +159,9 @@ class HomeController extends Controller
             'success' => true,
             'article' => [
                 'id'           => $article->id,
-                'image'        => $article->image ? asset('storage/' . $article->image) : null,
+                'image'        => $article->image ? $article->image_url : null,
                 'created_at'   => $article->published_date?->format('d M Y'),
-                'translations' => collect(array_keys($article->getTranslations('title')))->map(fn($lang) => [
-                    'language'    => $lang,
-                    'title'       => $article->getTranslation('title', $lang) ?? '',
-                    'description' => $article->getTranslation('description', $lang) ?? '',
-                    'content'     => $article->getTranslation('content', $lang) ?? '',
-                ])->values()->toArray(),
+                'translations' => $this->translationsFor($article, ['title', 'description', 'content']),
             ],
         ]);
     }
@@ -182,7 +170,7 @@ class HomeController extends Controller
     {
         $year = $request->input('year');
 
-        if (!$year) {
+        if (! $year) {
             return response()->json(['success' => false, 'message' => 'Year is required']);
         }
 
@@ -192,18 +180,16 @@ class HomeController extends Controller
             ->with(['tag', 'location'])
             ->get();
 
-        $old_locations = Location::where('status', 10)
+        $old_locations  = Location::where('status', 10)
             ->whereYear('created_at', $year)
             ->orderBy('order_by')
             ->get();
 
-        $tags         = Tag::where('status', 1)->orderBy('order_by')->get();
-        $partners     = PageSection::getSection('partners_logo', 'home');
-        $archive_hero = PageSection::getSection('archive_hero', 'home');
-
-        $eventYears    = EventProgram::where('status', 10)->selectRaw('YEAR(created_at) as year')->groupBy('year')->pluck('year');
-        $locationYears = Location::where('status', 10)->selectRaw('YEAR(created_at) as year')->groupBy('year')->pluck('year');
-        $years         = $eventYears->merge($locationYears)->unique()->sort()->values();
+        $tags            = Tag::where('status', 1)->orderBy('order_by')->get();
+        $sectionsByName  = PageSection::forPageKeyed('home', ['partners_logo', 'archive_hero']);
+        $partners        = $sectionsByName->get('partners_logo');
+        $archive_hero    = $sectionsByName->get('archive_hero');
+        $years           = $this->archiveYears();
 
         $html = view('site._archive_content', compact(
             'archive_events',
@@ -215,5 +201,45 @@ class HomeController extends Controller
         ))->with('activeYear', $year)->render();
 
         return response()->json(['success' => true, 'html' => $html]);
+    }
+
+    /**
+     * Build a translations list (one row per language) for a Spatie-translatable model.
+     *
+     * @param  array<int, string>  $fields
+     * @return array<int, array<string, mixed>>
+     */
+    private function translationsFor(Model $model, array $fields): array
+    {
+        $firstField = $fields[0];
+        $languages  = array_keys($model->getTranslations($firstField));
+
+        return collect($languages)
+            ->map(fn ($lang) => array_merge(
+                ['language' => $lang],
+                collect($fields)->mapWithKeys(fn ($f) => [$f => $model->getTranslation($f, $lang) ?? ''])->all()
+            ))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Distinct years drawn from archived events and archived locations, sorted ascending.
+     */
+    private function archiveYears(): Collection
+    {
+        return EventProgram::where('status', 10)
+            ->selectRaw('YEAR(created_at) as year')
+            ->groupBy('year')
+            ->pluck('year')
+            ->merge(
+                Location::where('status', 10)
+                    ->selectRaw('YEAR(created_at) as year')
+                    ->groupBy('year')
+                    ->pluck('year')
+            )
+            ->unique()
+            ->sort()
+            ->values();
     }
 }

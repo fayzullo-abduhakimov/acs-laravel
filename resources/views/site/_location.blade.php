@@ -4,7 +4,7 @@
 
 <div class="main_section">
     <div class="main_section_header">
-        @include('site._section_logo')
+        <x-section-logo />
         <div class="header_navigation">
             <ul>
                 @foreach ($locations as $location)
@@ -41,21 +41,7 @@
         </div>
 
         @if ($location_gallery && $location_gallery->galleryItems->isNotEmpty())
-            <div class="gallery swiper mt-5">
-                <div class="swiper-wrapper">
-                    @foreach ($location_gallery->galleryItems as $item)
-                        <div class="swiper-slide">
-                            <div class="slide_item">
-                                <img src="{{ $item->image ? asset('storage/' . $item->image) : '' }}" alt="">
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                <div class="swiper_navs">
-                    <div class="slide_prev"><i class="fas fa-arrow-left"></i></div>
-                    <div class="slide_next"><i class="fas fa-arrow-right"></i></div>
-                </div>
-            </div>
+            <x-gallery-swiper :items="$location_gallery->galleryItems" />
         @endif
     </div>
 </div>

@@ -12,7 +12,7 @@ class Settings extends Model
     protected $fillable = ['key', 'value'];
 
     /**
-     * Get the value attribute - decode JSON if it's a valid JSON string
+     * Decode JSON-encoded values transparently; fall back to the raw string.
      */
     public function getValueAttribute($value)
     {
@@ -22,18 +22,7 @@ class Settings extends Model
 
         $decoded = json_decode($value, true);
 
-        // If it's a valid JSON array/object, return decoded
-        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-            return $decoded;
-        }
-
-        // If it was a JSON-encoded string (like "\"text\""), decode it
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return $decoded;
-        }
-
-        // Otherwise return as-is
-        return $value;
+        return json_last_error() === JSON_ERROR_NONE ? $decoded : $value;
     }
 
     /**

@@ -1,6 +1,8 @@
 @php
     use App\Models\Page;
+    use App\Support\LocaleAssets;
     use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+    use Illuminate\Support\Facades\Cache;
 
     // Replicates Yii2 asset manager's `appendTimestamp => true`: cache-bust
 // local CSS/JS by file mtime so browsers never serve a stale copy.
@@ -11,26 +13,15 @@ $asset = function (string $path): string {
 
 $locale = app()->getLocale();
 
-$seoPage = \Illuminate\Support\Facades\Cache::remember(
-    'seo.page.home',
-    3600,
-    fn() => Page::where('name', 'home')->first(),
-);
+$seoPage = Cache::remember("seo.page.home.{$locale}", 3600, fn() => Page::where('name', 'home')->first());
 
 $seoTitle = $seoPage
     ? ($seoPage->getTranslation('meta_title', $locale) ?:
     $seoPage->getTranslation('title', $locale))
     : config('app.name');
-$seoDescription = $seoPage ? $seoPage->getTranslation('meta_description', $locale) : null;
+$seoDescription = $seoPage?->getTranslation('meta_description', $locale);
 
-$ogLogoMap = [
-    'ru' => '/images/logo_home/logo_home_new_ru.png',
-    'uz' => '/images/logo_home/logo_home_new_uz.png',
-    'kk' => '/images/logo_home/logo_home_new_ka.png',
-    'en' => '/images/logo_home/logo_home_new_en.png',
-];
-$ogImage = url($ogLogoMap[$locale] ?? $ogLogoMap['en']);
-
+$ogImage = url(LocaleAssets::ogImage($locale));
 $yandexMetrika = site_setting('yandex_metrika', '103799675');
 @endphp
 <!DOCTYPE html>
@@ -56,7 +47,7 @@ $yandexMetrika = site_setting('yandex_metrika', '103799675');
             href="{{ LaravelLocalization::getLocalizedURL($localeCode, url()->current()) }}">
     @endforeach
 
-    <!-- Favicon -->
+    {{-- Favicon --}}
     <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
@@ -73,37 +64,7 @@ $yandexMetrika = site_setting('yandex_metrika', '103799675');
     <link rel="stylesheet" href="{{ $asset('/css/jquery.fancybox.min.css') }}">
     <link rel="stylesheet" href="{{ $asset('/css/swiper-bundle.min.css') }}">
 
-    @if ($yandexMetrika)
-        <!-- Yandex.Metrika counter -->
-        <script type="text/javascript">
-            (function(m, e, t, r, i, k, a) {
-                m[i] = m[i] || function() {
-                    (m[i].a = m[i].a || []).push(arguments)
-                };
-                m[i].l = 1 * new Date();
-                for (var j = 0; j < document.scripts.length; j++) {
-                    if (document.scripts[j].src === r) {
-                        return;
-                    }
-                }
-                k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(
-                    k, a)
-            })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id={{ $yandexMetrika }}', 'ym');
-            ym({{ $yandexMetrika }}, 'init', {
-                ssr: true,
-                webvisor: true,
-                clickmap: true,
-                ecommerce: "dataLayer",
-                accurateTrackBounce: true,
-                trackLinks: true
-            });
-        </script>
-        <noscript>
-            <div><img src="https://mc.yandex.ru/watch/{{ $yandexMetrika }}" style="position:absolute; left:-9999px;"
-                    alt="" /></div>
-        </noscript>
-        <!-- /Yandex.Metrika counter -->
-    @endif
+    <x-yandex-metrika :id="$yandexMetrika" />
 
     @stack('styles')
 </head>
@@ -118,7 +79,7 @@ $yandexMetrika = site_setting('yandex_metrika', '103799675');
         <x-footer :footer_settings="$footer_settings" :social_links="$social_links" :footer_menus="$footer_menus" />
     </main>
 
-    {{-- @include('site._registration_form') --}}
+    @include('site._registration_form')
 
     <script src="{{ $asset('/js/jquery.min.js') }}"></script>
     <script src="{{ $asset('/js/bootstrap.bundle.min.js') }}"></script>
@@ -128,7 +89,7 @@ $yandexMetrika = site_setting('yandex_metrika', '103799675');
         window.ROUTES = {
             getPrograms: '{{ route('get-programs') }}',
             getArticle: '{{ route('get-article') }}',
-            archiveYear: '{{ route('archive-year') }}'
+            archiveYear: '{{ route('archive-year') }}',
         };
     </script>
     <script src="{{ $asset('/js/main.js') }}"></script>

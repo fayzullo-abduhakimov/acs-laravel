@@ -1,29 +1,8 @@
 @php
-    $locale = app()->getLocale();
-    $regLogoMap = [
-        'ru' => [
-            'dark' => '/images/aral_logo/dark/logo_footer_new_ru.svg',
-            'light' => '/images/aral_logo/light/logo_footer_new_ru.svg',
-        ],
-        'uz' => [
-            'dark' => '/images/aral_logo/dark/logo_footer_new_uz.svg',
-            'light' => '/images/aral_logo/light/logo_footer_new_uz.svg',
-        ],
-        'kk' => [
-            'dark' => '/images/aral_logo/dark/logo_footer_new_ka.svg',
-            'light' => '/images/aral_logo/light/logo_footer_new_ka.svg',
-        ],
-        'en' => [
-            'dark' => '/images/aral_logo/dark/logo_footer_new_en.svg',
-            'light' => '/images/aral_logo/light/logo_footer_new_en.svg',
-        ],
-    ];
-    $regLogos = $regLogoMap[$locale] ?? $regLogoMap['en'];
-
     $sourceOptions = [
-        'Website' => translator('app', 'Website'),
+        'Website'          => translator('app', 'Website'),
         'Friend/Colleague' => translator('app', 'Friend/Colleague'),
-        'Online research' => translator('app', 'Online research'),
+        'Online research'  => translator('app', 'Online research'),
     ];
     $dayOptions = [
         'July 4th' => translator('app', 'July 4th'),
@@ -39,8 +18,7 @@
         <div class="modal-content">
             <div class="modal_header">
                 <div class="modal_logo">
-                    <img src="{{ $regLogos['dark'] }}" alt="logo" class="logo_img dark">
-                    <img src="{{ $regLogos['light'] }}" alt="logo" class="logo_img light">
+                    <x-logo variant="footer" image-class="logo_img" />
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -69,101 +47,43 @@
                     @csrf
 
                     <div class="row g-3 form_inputs">
-                        <div class="col-md-6">
-                            <input type="text" name="first_name" value="{{ old('first_name') }}"
-                                class="form_input @error('first_name', 'registration') is-invalid @enderror"
-                                placeholder="{{ translator('app', 'First Name') }}" required>
-                            @error('first_name', 'registration')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <input type="text" name="last_name" value="{{ old('last_name') }}"
-                                class="form_input @error('last_name', 'registration') is-invalid @enderror"
-                                placeholder="{{ translator('app', 'Last Name') }}" required>
-                            @error('last_name', 'registration')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <input type="email" name="email" value="{{ old('email') }}"
-                                class="form_input @error('email', 'registration') is-invalid @enderror"
-                                placeholder="{{ translator('app', 'you@example.com') }}" required>
-                            @error('email', 'registration')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <input type="text" name="phone" value="{{ old('phone') }}"
-                                class="form_input @error('phone', 'registration') is-invalid @enderror"
-                                placeholder="+998 99 999 99 99" required>
-                            @error('phone', 'registration')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-12">
-                            <input type="text" name="address" value="{{ old('address') }}"
-                                class="form_input @error('address', 'registration') is-invalid @enderror"
-                                placeholder="{{ translator('app', 'Address') }}" required>
-                            @error('address', 'registration')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <input type="text" name="city" value="{{ old('city') }}"
-                                class="form_input @error('city', 'registration') is-invalid @enderror"
-                                placeholder="{{ translator('app', 'City') }}" required>
-                            @error('city', 'registration')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <input type="text" name="state" value="{{ old('state') }}" class="form_input"
-                                placeholder="{{ translator('app', 'State / Province') }}">
-                        </div>
-
-                        <div class="col-md-12">
-                            <input type="text" name="postal_code" value="{{ old('postal_code') }}"
-                                class="form_input" placeholder="{{ translator('app', 'Postal / ZIP') }}">
-                        </div>
+                        @foreach ([
+                            ['name' => 'first_name',  'type' => 'text',  'col' => 'col-md-6', 'placeholder' => translator('app', 'First Name'),       'required' => true],
+                            ['name' => 'last_name',   'type' => 'text',  'col' => 'col-md-6', 'placeholder' => translator('app', 'Last Name'),        'required' => true],
+                            ['name' => 'email',       'type' => 'email', 'col' => 'col-md-6', 'placeholder' => translator('app', 'you@example.com'),  'required' => true],
+                            ['name' => 'phone',       'type' => 'text',  'col' => 'col-md-6', 'placeholder' => '+998 99 999 99 99',                   'required' => true],
+                            ['name' => 'address',     'type' => 'text',  'col' => 'col-12',   'placeholder' => translator('app', 'Address'),          'required' => true],
+                            ['name' => 'city',        'type' => 'text',  'col' => 'col-md-6', 'placeholder' => translator('app', 'City'),             'required' => true],
+                            ['name' => 'state',       'type' => 'text',  'col' => 'col-md-6', 'placeholder' => translator('app', 'State / Province'), 'required' => false],
+                            ['name' => 'postal_code', 'type' => 'text',  'col' => 'col-md-12','placeholder' => translator('app', 'Postal / ZIP'),     'required' => false],
+                        ] as $field)
+                            <div class="{{ $field['col'] }}">
+                                <input type="{{ $field['type'] }}"
+                                       name="{{ $field['name'] }}"
+                                       value="{{ old($field['name']) }}"
+                                       placeholder="{{ $field['placeholder'] }}"
+                                       @class([
+                                           'form_input',
+                                           'is-invalid' => $errors->registration->has($field['name']),
+                                       ])
+                                       @if ($field['required']) required @endif>
+                                @if ($errors->registration->has($field['name']))
+                                    <div class="invalid-feedback">{{ $errors->registration->first($field['name']) }}</div>
+                                @endif
+                            </div>
+                        @endforeach
                     </div>
 
                     <div class="row checkbox_row">
-                        <div class="form-group">
-                            <div class="group-title">{{ translator('app', 'How did you hear about the Summit?') }}
-                            </div>
-                            <div class="d-flex flex-wrap checkbox_wrapper">
-                                @foreach ($sourceOptions as $value => $label)
-                                    <label class="custom-checkbox">
-                                        <input type="checkbox" name="sources[]" value="{{ $value }}"
-                                            @checked(in_array($value, (array) old('sources', [])))>
-                                        <span class="checkmark"></span>
-                                        {{ $label }}
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
+                        <x-registration-checkbox-group
+                            name="sources"
+                            :title="translator('app', 'How did you hear about the Summit?')"
+                            :options="$sourceOptions" />
 
-                        <div class="form-group">
-                            <div class="group-title">
-                                {{ translator('app', 'How many will attend? (multiple choice allowed)') }}</div>
-                            <div class="d-flex flex-wrap checkbox_wrapper">
-                                @foreach ($dayOptions as $value => $label)
-                                    <label class="custom-checkbox">
-                                        <input type="checkbox" name="attendance_days[]" value="{{ $value }}"
-                                            @checked(in_array($value, (array) old('attendance_days', [])))>
-                                        <span class="checkmark"></span>
-                                        {{ $label }}
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
+                        <x-registration-checkbox-group
+                            name="attendance_days"
+                            :title="translator('app', 'How many will attend? (multiple choice allowed)')"
+                            :options="$dayOptions" />
                     </div>
 
                     <button type="submit" class="submit_button">
@@ -178,7 +98,7 @@
 @if ($regHasError || (session('success') && old('email')))
     @push('scripts')
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 var el = document.getElementById('registerModal');
                 if (el && window.bootstrap) {
                     new bootstrap.Modal(el).show();
@@ -190,11 +110,9 @@
 
 @push('scripts')
     <script>
-        $('#registerModal').on('hidden.bs.modal', function() {
+        $('#registerModal').on('hidden.bs.modal', function () {
             var form = $(this).find('form')[0];
-            if (form) {
-                form.reset();
-            }
+            if (form) form.reset();
             $(this).find('.is-invalid').removeClass('is-invalid');
             $(this).find('.invalid-feedback').text('');
         });

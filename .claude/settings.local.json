@@ -25,7 +25,8 @@
       "Bash(php *)",
       "Bash(curl -s http://localhost/acs-laravel/public/)",
       "Bash(curl -s http://localhost/acs-laravel/)",
-      "Bash(curl -s http://aralculturesummit.uz/)"
+      "Bash(curl -s http://aralculturesummit.uz/)",
+      "Bash(git *)"
     ]
   }
 }

@@ -1,10 +1,14 @@
+@php
+    $newsletterUrl = site_setting('newsletter_url', 'https://95a8f6e7.sibforms.com/serve/MUIFAFNnFlzJwGA0A0f7_DNLkzMeFt3lSeDkMU0Nev9O7WE8y3xupK0e3j4DmHphBPHHDWHiyUoX6TgPAtkcnZowNNA6SYkJIzdTZdB8lHVoYOLBB8TkBhesW0CsZJogWX3TdfTv71RKgpSEjmljKTaPMoTceo5JIQDPfmyv5UvTY6fdi7ExLEYwNHwDx6JUf5Cr2REOV9BhQw08');
+@endphp
+
 <div class="section_header">
     <p class="first_title">{{ translator('app', 'Programme') }}</p>
 </div>
 
 <div class="main_section">
     <div class="main_section_header">
-        @include('site._section_logo')
+        <x-section-logo />
         <div class="header_navigation">
             <ul>
                 <li><a href="#partners" class="navigation_link scroll-link">{{ translator('app', 'Partners') }}</a></li>
@@ -19,8 +23,7 @@
             <div class="section_subtitle">{{ $program_header->subtitle }}</div>
         @endif
         <div class="reg_button_container">
-            <a href="https://95a8f6e7.sibforms.com/serve/MUIFAFNnFlzJwGA0A0f7_DNLkzMeFt3lSeDkMU0Nev9O7WE8y3xupK0e3j4DmHphBPHHDWHiyUoX6TgPAtkcnZowNNA6SYkJIzdTZdB8lHVoYOLBB8TkBhesW0CsZJogWX3TdfTv71RKgpSEjmljKTaPMoTceo5JIQDPfmyv5UvTY6fdi7ExLEYwNHwDx6JUf5Cr2REOV9BhQw08?fbclid=PAZXh0bgNhZW0CMTEAAaeg_ouLeE3RoIBcLCUCruASNTOIkYyKaAp5f6HT7xa9Tfkpy4FAELFbPV7Wjg_aem_nV-i_lS5aLrL6lJW8rFsjA&clckid=daa04bb0"
-               class="reg_button" target="_blank">
+            <a href="{{ $newsletterUrl }}" class="reg_button" target="_blank" rel="noopener">
                 {{ translator('app', 'Subscribe to newsletter') }} ↘
             </a>
         </div>
@@ -37,7 +40,7 @@
                                 @php $carbon = \Carbon\Carbon::parse($day)->locale(app()->getLocale()); @endphp
                                 <div class="col-4 pl-0">
                                     <button type="button"
-                                            class="event_day w-100 {{ $index === 0 ? 'active' : '' }}"
+                                            @class(['event_day', 'w-100', 'active' => $index === 0])
                                             data-day="{{ $day }}">
                                         {{ $carbon->isoFormat('D MMMM') }}
                                     </button>
@@ -47,8 +50,8 @@
                     </div>
                 </div>
 
-                <div class="events">
-                    @if ($firstDayPrograms->isNotEmpty())
+                @if ($firstDayPrograms->isNotEmpty())
+                    <div class="events">
                         <div class="events_container">
                             @foreach ($firstDayPrograms as $program)
                                 <div class="row mb-3">
@@ -80,13 +83,15 @@
                                 </div>
                             @endforeach
                         </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
 
                 <div class="master_class">
                     <div class="row">
                         <div class="col-12 col-lg-3 pl-0 pr-0 pr-md-2">
-                            <div class="title">{{ translator('app', 'Masterclasses and market last from 11:00 to 16:30') }}</div>
+                            <div class="title">
+                                {{ translator('app', 'Masterclasses and market last from 11:00 to 16:30') }}
+                            </div>
                         </div>
                         <div class="col-12 col-lg-9 pr-0 pl-0 pl-md-2">
                             <div class="description">{!! translator('app', 'Masterclasses and market') !!}</div>
@@ -95,17 +100,7 @@
                 </div>
             </div>
 
-            <div class="partners" id="partners">
-                <div class="partners_title">{{ translator('app', 'Aral Culture Summit Partners') }}</div>
-                @if ($partners && $partners->galleryItems->isNotEmpty())
-                    <div class="partners_logo">
-                        @foreach ($partners->galleryItems as $partner)
-                            <div class="partner_logo">
-                                <img src="{{ $partner->image ? asset('storage/' . $partner->image) : '' }}" alt="partner">
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+            <x-partners-grid id="partners" :partners="$partners" :title="translator('app', 'Aral Culture Summit Partners')">
                 <div class="partner_texts row">
                     @if ($partners_left)
                         <div class="col-12 col-lg-6 mb-3 mb-md-0">
@@ -130,7 +125,7 @@
                         <a href="#" class="download_btn">{{ translator('app', 'Press kit') }}</a>
                     </div>
                 </div>
-            </div>
+            </x-partners-grid>
         </div>
     </div>
 </div>
