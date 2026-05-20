@@ -13,7 +13,7 @@
         <x-storage-image :path="$article->image" :alt="$article->title" />
     </div>
     <div class="article_date">
-        {{ $article->published_date?->locale($locale)->translatedFormat($dateFormat) }}
+        {{ $article->published_date?->locale(carbon_locale($locale))->translatedFormat($dateFormat) }}
     </div>
     <div class="article_title">{{ $article->title }}</div>
     <button type="button" class="article_link" data-id="{{ $article->id }}">

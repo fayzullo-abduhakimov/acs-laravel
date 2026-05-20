@@ -178,6 +178,24 @@ if (! function_exists('translator_html')) {
     }
 }
 
+if (! function_exists('carbon_locale')) {
+    /**
+     * Map an app locale code to the Carbon/ICU locale string.
+     *
+     * Carbon's built-in `uz` locale uses Uzbek Cyrillic script.
+     * `uz_Latn` selects the Latin-script variant instead.
+     */
+    function carbon_locale(?string $locale = null): string
+    {
+        $locale = $locale ?: app()->getLocale();
+
+        return match ($locale) {
+            'uz' => 'uz_Latn',
+            default => $locale,
+        };
+    }
+}
+
 if (! function_exists('clear_translator_cache')) {
     /**
      * Clear translator cache

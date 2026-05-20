@@ -183,7 +183,7 @@
                     <div class="programs_accordion">
                         @foreach ($program_dates as $date)
                             @php
-                                $carbon = \Carbon\Carbon::parse($date->date)->locale($locale);
+                                $carbon = \Carbon\Carbon::parse($date->date)->locale(carbon_locale($locale));
                                 $daySessions = $sessions->where('date_id', $date->id);
                             @endphp
                             <div class="custom_accordion">

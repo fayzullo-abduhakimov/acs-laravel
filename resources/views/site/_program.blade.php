@@ -37,7 +37,7 @@
                     <div class="event_days">
                         <div class="row">
                             @foreach ($days as $index => $day)
-                                @php $carbon = \Carbon\Carbon::parse($day)->locale(app()->getLocale()); @endphp
+                                @php $carbon = \Carbon\Carbon::parse($day)->locale(carbon_locale()); @endphp
                                 <div class="col-4 pl-0">
                                     <button type="button"
                                             @class(['event_day', 'w-100', 'active' => $index === 0])
