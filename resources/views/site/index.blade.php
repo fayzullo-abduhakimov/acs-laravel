@@ -79,6 +79,14 @@
                                     <p>{!! $hero->title !!}</p>
                                 </div>
                                 <div class="introduction_content">
+                                    @if ($hero->image)
+                                        <div class="image">
+                                            <a href="{{ $hero->image_url }}" data-fancybox="gallery"
+                                                class="d-flex align-items-center w-100">
+                                                <img src="{{ $hero->image_url }}" width="75%" alt="image">
+                                            </a>
+                                        </div>
+                                    @endif
                                     {!! $hero->content !!}
                                 </div>
                                 @if ($youtube_link)
