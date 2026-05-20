@@ -64,7 +64,7 @@ class HomeController extends Controller
             'program_dates'     => ProgramDate::orderBy('date')->get(),
             'sessions'          => ProgramSession::orderBy('sort')->get(),
             'years'             => ArchiveNews::selectRaw('YEAR(created_at) as year')
-                                       ->groupBy('year')->orderBy('year')->pluck('year'),
+                ->groupBy('year')->orderBy('year')->pluck('year'),
             'locations'         => Location::where('status', 1)->orderBy('order_by')->get(),
 
             'youtube_link'      => SiteSettings::where('name', 'youtube_link')->value('value') ?? '',
@@ -130,7 +130,7 @@ class HomeController extends Controller
             ->with(['location', 'tag'])
             ->orderBy('start_time')
             ->get()
-            ->map(fn ($p) => [
+            ->map(fn($p) => [
                 'id'           => $p->id,
                 'start_time'   => substr($p->start_time, 0, 5),
                 'end_time'     => substr($p->end_time, 0, 5),
@@ -215,9 +215,9 @@ class HomeController extends Controller
         $languages  = array_keys($model->getTranslations($firstField));
 
         return collect($languages)
-            ->map(fn ($lang) => array_merge(
+            ->map(fn($lang) => array_merge(
                 ['language' => $lang],
-                collect($fields)->mapWithKeys(fn ($f) => [$f => $model->getTranslation($f, $lang) ?? ''])->all()
+                collect($fields)->mapWithKeys(fn($f) => [$f => $model->getTranslation($f, $lang) ?? ''])->all()
             ))
             ->values()
             ->all();

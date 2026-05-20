@@ -5,17 +5,20 @@
 
     $locale = app()->getLocale();
 
-    $menuTabCount   = $sections->filter(fn ($s) => ! $s->is_opened && $s->status == 1)->count();
+    $menuTabCount = $sections->filter(fn($s) => !$s->is_opened && $s->status == 1)->count();
     $totalMenuWidth = $menuTabCount * 60;
 
-    $homeLogo      = LocaleAssets::homeLogo($locale);
-    $newsletterUrl = site_setting('newsletter_url', 'https://95a8f6e7.sibforms.com/serve/MUIFAFNnFlzJwGA0A0f7_DNLkzMeFt3lSeDkMU0Nev9O7WE8y3xupK0e3j4DmHphBPHHDWHiyUoX6TgPAtkcnZowNNA6SYkJIzdTZdB8lHVoYOLBB8TkBhesW0CsZJogWX3TdfTv71RKgpSEjmljKTaPMoTceo5JIQDPfmyv5UvTY6fdi7ExLEYwNHwDx6JUf5Cr2REOV9BhQw08');
+    $homeLogo = LocaleAssets::homeLogo($locale);
+    $newsletterUrl = site_setting(
+        'newsletter_url',
+        'https://95a8f6e7.sibforms.com/serve/MUIFAFNnFlzJwGA0A0f7_DNLkzMeFt3lSeDkMU0Nev9O7WE8y3xupK0e3j4DmHphBPHHDWHiyUoX6TgPAtkcnZowNNA6SYkJIzdTZdB8lHVoYOLBB8TkBhesW0CsZJogWX3TdfTv71RKgpSEjmljKTaPMoTceo5JIQDPfmyv5UvTY6fdi7ExLEYwNHwDx6JUf5Cr2REOV9BhQw08',
+    );
 
-    $bySectionName = fn (string $name) => $sections->firstWhere('name', $name);
+    $bySectionName = fn(string $name) => $sections->firstWhere('name', $name);
 
-    $heroSection       = $bySectionName('hero');
-    $researchSection   = $bySectionName('research');
-    $archiveSection    = $bySectionName('archive');
+    $heroSection = $bySectionName('hero');
+    $researchSection = $bySectionName('research');
+    $archiveSection = $bySectionName('archive');
     $aralSchoolSection = $bySectionName('aral_school');
 @endphp
 
@@ -100,9 +103,11 @@
                     <x-section-logo />
                     <div class="header_navigation">
                         <ul>
-                            <li><a href="#books"    class="navigation_link scroll-link">{{ translator('app', 'Books') }}</a></li>
-                            <li><a href="#articles" class="navigation_link scroll-link">{{ translator('app', 'Articles') }}</a></li>
-                            <li><a href="#"         class="nav_link back_link">← {{ translator('app', 'Back') }}</a></li>
+                            <li><a href="#books" class="navigation_link scroll-link">{{ translator('app', 'Books') }}</a>
+                            </li>
+                            <li><a href="#articles"
+                                    class="navigation_link scroll-link">{{ translator('app', 'Articles') }}</a></li>
+                            <li><a href="#" class="nav_link back_link">← {{ translator('app', 'Back') }}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -156,8 +161,7 @@
                         <ul>
                             @foreach ($years as $year)
                                 <li>
-                                    <button type="button" @class(['navigation_link', 'active' => $loop->first])
-                                            data-year="{{ $year }}">
+                                    <button type="button" @class(['navigation_link', 'active' => $loop->first]) data-year="{{ $year }}">
                                         {{ $year }}
                                     </button>
                                 </li>
@@ -179,8 +183,8 @@
                     <div class="programs_accordion">
                         @foreach ($program_dates as $date)
                             @php
-                                $carbon       = \Carbon\Carbon::parse($date->date)->locale($locale);
-                                $daySessions  = $sessions->where('date_id', $date->id);
+                                $carbon = \Carbon\Carbon::parse($date->date)->locale($locale);
+                                $daySessions = $sessions->where('date_id', $date->id);
                             @endphp
                             <div class="custom_accordion">
                                 <div class="accordion_date">{{ $carbon->isoFormat('D MMMM, dddd') }}</div>
@@ -221,19 +225,14 @@
                     <x-gallery-swiper :items="$archive_gallery->galleryItems" />
                 @endif
 
-                <x-partners-grid class="archive" :partners="$partners"
-                    :title="translator('app', 'Aral Culture Summit Partners')" />
+                <x-partners-grid class="archive" :partners="$partners" :title="translator('app', 'Aral Culture Summit Partners')" />
             </div>
         </x-section-tab>
     @endif
 
     {{-- ─── ARAL SCHOOL ──────────────────────────────────────────────────────── --}}
     @if ($aralSchoolSection)
-        <x-section-tab
-            :section="$aralSchoolSection"
-            :total-menu-width="$totalMenuWidth"
-            extra-class="aral_school redirect-section"
-            :redirect-url="$aralSchoolSection->redirect_url">
+        <x-section-tab :section="$aralSchoolSection" :total-menu-width="$totalMenuWidth" extra-class="aral_school redirect-section" :redirect-url="$aralSchoolSection->redirect_url">
             <div class="section_header">
                 <p class="first_title">{{ strtoupper(str_replace('_', ' ', $aralSchoolSection->name)) }}</p>
             </div>
