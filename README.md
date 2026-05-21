@@ -1,66 +1,91 @@
-# Filament 4 Starter Kit
+# ACS Conference Platform
 
-Стартовый шаблон на **Laravel 12** + **Filament 4** с готовой системой настроек, переводов и SEO.
+A multilingual conference and event management website built with **Laravel 12** and **Filament 4**. It covers the full public-facing experience — event programs, articles, books, archive, venue locations, registrations, and a newsletter — all managed through a Filament admin panel.
 
-## Возможности
+---
 
-### Админ-панель (Filament)
-- **Shield** — управление ролями и правами доступа
-- **Breezy** — страница профиля пользователя
-- **Logger** — логирование действий пользователей
-- **Language Switch** — переключение языков в админке
-- **Translatable Tabs** — удобные табы для мультиязычного контента
+## Features
 
-### Настройки сайта
-- **Settings** — главные настройки (SEO, метрики)
-- **SiteSettings** — произвольные key-value настройки
-- **SiteTranslations** — переводы из базы данных
+### Public Site
+- **Event Program** — schedule organised by day with time slots, locations, and tags; AJAX-powered day switching
+- **Articles** — news feed with modal article viewer
+- **Books** — downloadable/linked resource library
+- **Archive** — past editions browsable by year, with archived events and locations
+- **Registrations** — multi-field attendee registration form
+- **Newsletter** — email subscription
+- **Social Links** — configurable social media links in the footer
+- **Navigation Menus** — footer menus managed from the admin panel
+- **Page Sections** — CMS-style content blocks (hero, partners, gallery headers, etc.)
 
-### Готовые хелперы
+### Admin Panel (Filament 4)
+- **Event Programs** — CRUD for sessions, days, times, tags, locations
+- **Articles / Archive News** — content management with publish status and ordering
+- **Books** — upload covers and files or set external links
+- **Locations** — venue management with image galleries
+- **Registrations** — view and manage attendee registrations
+- **Subscribers** — newsletter subscriber list
+- **Tags** — reusable labels for programs
+- **Menus** — navigation item management
+- **Sections / Pages** — page section content editing
+- **Users** — user account management
+- **Site Settings** — arbitrary key-value configuration (phone, email, YouTube link, etc.)
+- **Translations** — database-driven UI string overrides
+
+### Admin Plugins
+- **Shield** — role and permission management
+- **Breezy** — user profile page
+- **Logger** — activity log for all admin actions
+- **Language Switch** — switch locale from the admin toolbar
+- **Translatable Tabs** — per-language tabs on all translatable forms
+- **Light Switch** — dark/light mode toggle
+- **Auth Designer** — custom login page styling
+
+### Internationalisation
+- URL-based locale routing via `mcamara/laravel-localization`
+- Model-level translations with `spatie/laravel-translatable`
+- Database-driven translation overrides (`SiteTranslations`)
+- Helper functions:
+
 ```php
-settings('seo.title.ru');
-settings('metrics.yandex');
-site_setting('contact_phone');
-translator('home.welcome');
+settings('seo.title.ru');         // main settings
+site_setting('acdf_phone');       // key-value site settings
+translator('app', 'Welcome');     // DB translation lookup
 ```
 
-### Кеширование
-- Все данные кешируются автоматически через Redis
-- При изменении в админке кеш очищается через Observers
-- Ручная очистка: `php artisan project:cache`
+### Caching
+- All settings and translations cached automatically via Redis
+- Cache invalidated on save through Eloquent Observers
+- Manual rebuild: `php artisan project:cache`
 
 ---
 
-## Установка
+## Requirements
 
-### Требования
-- [Docker](https://www.docker.com/) + Docker Compose
-- [Node.js](https://nodejs.org/) — на машине разработчика (для Vite)
-
-> Composer установлен внутри Docker контейнера — дополнительно устанавливать не нужно.
+- PHP 8.2+
+- MySQL / MariaDB
+- Node.js (for Vite)
+- Redis
+- [Docker](https://www.docker.com/) + Docker Compose (recommended)
 
 ---
 
-### Шаг 1 — Настройка `.env`
+## Installation
+
+### Step 1 — Configure `.env`
 
 ```bash
 cp .env.example .env
 ```
 
-Поправь значения:
+Set at minimum:
 ```env
 APP_URL=http://localhost
-
 DB_USERNAME=app
 DB_PASSWORD=secret
 DB_ROOT_PASSWORD=secret
 ```
 
-> ⚠️ На продакшне замени все пароли на сложные!
-
----
-
-### Шаг 2 — Первый запуск
+### Step 2 — First run
 
 **Windows:**
 ```bash
@@ -72,17 +97,15 @@ install.bat
 make install
 ```
 
-Делает всё автоматически:
-1. Поднимает Docker контейнеры
-2. Устанавливает PHP зависимости (`composer install`)
-3. Устанавливает JS зависимости (`npm install`)
-4. Генерирует `APP_KEY`
-5. Запускает миграции, seed, shield
-6. Создаёт admin пользователя (введи имя/email/пароль)
+This will:
+1. Start Docker containers
+2. Install PHP dependencies (`composer install`)
+3. Install JS dependencies (`npm install`)
+4. Generate `APP_KEY`
+5. Run migrations, seeders, and Shield setup
+6. Prompt you to create an admin user
 
----
-
-### Шаг 3 — Запуск Vite (для разработки)
+### Step 3 — Start Vite (development)
 
 **Windows:**
 ```bash
@@ -94,115 +117,95 @@ dev.bat
 make dev
 ```
 
----
-
-### Ссылки
-
-| Сервис        | URL                            |
-|---------------|--------------------------------|
-| 🌐 Сайт       | http://localhost               |
-| 🔧 Админ      | http://localhost/admin         |
-| 🗄️ phpMyAdmin  | http://localhost:8080          |
-| 📧 Mailpit    | http://localhost:8025          |
-
----
-
-### Обновление (после изменений в коде)
-
-```bash
-docker compose exec app php artisan project:update
-npm run build   # только если менялся JS/CSS
-```
-
----
-
-### Продакшн
-
-```env
-APP_ENV=production
-APP_DEBUG=false
-```
-
-```bash
-make install
-npm run build
-```
-
----
-
-### Все команды
-
-```bash
-make install      # установка с нуля
-make dev          # запуск dev окружения (контейнеры + Vite)
-make up           # запустить контейнеры
-make down         # остановить контейнеры
-make shell        # войти в контейнер
-make migrate      # запустить миграции
-make fresh        # migrate:fresh --seed
-make test         # запустить тесты
-make cache-clear  # очистить кеш
-make npm-build    # собрать фронтенд
-```
-
----
-
-### Локальный запуск (без Docker)
+### Local run (without Docker)
 
 ```bash
 cp .env.example .env
-# Настройте БД в .env
 php artisan key:generate
 php artisan project:init
 php artisan make:filament-user
 composer dev
 ```
 
-Сайт: http://127.0.0.1:8000
-Админка: http://127.0.0.1:8000/admin
+---
+
+## URLs
+
+| Service     | URL                         |
+|-------------|-----------------------------|
+| Site        | http://localhost            |
+| Admin panel | http://localhost/admin      |
+| phpMyAdmin  | http://localhost:8080       |
+| Mailpit     | http://localhost:8025       |
 
 ---
 
-## Структура проекта
+## Artisan Commands
+
+```bash
+php artisan project:init      # Fresh install (migrate:fresh + seed + shield)
+php artisan project:update    # Incremental update (migrate + shield)
+php artisan project:cache     # Rebuild all caches
+composer check                # pint + tests + phpstan
+```
+
+## Make Commands
+
+```bash
+make install      # Full install from scratch
+make dev          # Start containers + Vite
+make up           # Start containers
+make down         # Stop containers
+make shell        # Enter app container
+make migrate      # Run migrations
+make fresh        # migrate:fresh --seed
+make test         # Run tests
+make cache-clear  # Clear cache
+make npm-build    # Build frontend assets
+```
+
+---
+
+## Project Structure
 
 ```
 app/
 ├── Filament/
-│   ├── Pages/
-│   │   └── Settings.php          # Страница настроек (SEO, метрики)
-│   └── Resources/
-│       ├── SiteSettings/         # CRUD для произвольных настроек
-│       ├── SiteTranslations/     # CRUD для переводов
-│       └── Users/                # Управление пользователями
-├── Helpers/
-│   └── functions.php             # Хелперы: settings(), translator()
-├── Models/
-│   ├── Settings.php              # Главные настройки
-│   ├── SiteSettings.php          # Произвольные настройки
-│   └── SiteTranslation.php       # Переводы
-└── Observers/                    # Автоочистка кеша
+│   ├── Resources/
+│   │   ├── Articles/           # News articles
+│   │   ├── ArchiveNews/        # Past edition archive
+│   │   ├── Books/              # Resource library
+│   │   ├── EventPrograms/      # Conference sessions
+│   │   ├── Locations/          # Venues
+│   │   ├── Menus/              # Navigation menus
+│   │   ├── Registrations/      # Attendee registrations
+│   │   ├── Sections/           # Page content blocks
+│   │   ├── SiteSettings/       # Key-value config
+│   │   ├── SiteTranslations/   # DB-driven translations
+│   │   ├── SocialLinks/        # Social media links
+│   │   ├── Tags/               # Program tags
+│   │   └── Users/              # User management
+│   └── Widgets/
+│       └── GreetingWidget.php
+├── Http/Controllers/
+│   └── HomeController.php      # Single-page site controller
+├── Models/                     # Eloquent models
+├── Observers/                  # Cache invalidation on model save
+└── Helpers/
+    └── functions.php           # settings(), site_setting(), translator()
 ```
 
 ---
 
-## Artisan команды
+## Key Dependencies
 
-```bash
-php artisan project:init      # Инициализация (migrate:fresh + seed + shield)
-php artisan project:update    # Обновление (migrate + shield)
-php artisan project:cache     # Пересобрать кеш
-composer check                # pint + tests + phpstan
-```
-
----
-
-## Зависимости
-
-| Пакет | Описание |
-|-------|----------|
-| filament/filament | Админ-панель |
-| bezhansalleh/filament-shield | Роли и права |
-| jeffgreco13/filament-breezy | Профиль пользователя |
-| jacobtims/filament-logger | Логирование |
-| spatie/laravel-translatable | Мультиязычность |
-| abdulmajeed-jamaan/filament-translatable-tabs | Табы для переводов |
+| Package | Purpose |
+|---------|---------|
+| filament/filament | Admin panel framework |
+| bezhansalleh/filament-shield | Roles & permissions |
+| jeffgreco13/filament-breezy | User profile page |
+| jacobtims/filament-logger | Admin activity logging |
+| spatie/laravel-translatable | Per-model multilingual content |
+| mcamara/laravel-localization | URL-based locale routing |
+| awcodes/light-switch | Dark/light mode toggle |
+| pestphp/pest | Testing framework |
