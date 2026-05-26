@@ -201,7 +201,7 @@
                                         <div class="programs_accordion__item">
                                             <div class="accordion_content">
                                                 <div class="accordion__title">{{ $session->title }}</div>
-                                                <div class="accordion__body">{!! $session->content !!}</div>
+                                                <div class="accordion__body">{!! $session->cleanContent() !!}</div>
                                             </div>
                                         </div>
                                     @endforeach
